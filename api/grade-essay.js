@@ -3,7 +3,6 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Read the key from Vercel
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
@@ -13,23 +12,25 @@ export default async function handler(req, res) {
     let totalMarks = 10; 
     let markingScheme = "";
 
+    // NOTE: You can now put ANY marking scheme structure here, and the AI will adapt.
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
         markingScheme = `
         Question: Discuss the boundaries and contents of the Carotid Triangle.
-        
         Marking Scheme (Total 10 marks):
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
-        3. Diagram (2 marks): 
-           - A hand-drawn diagram is present in the student's work.
-           - RULE FOR DIAGRAM: If ANY drawing of the neck/triangle is present, and the student has listed the muscles (Digastric, Omohyoid, SCM, Stylohyoid) anywhere on the page, you MUST award the full 2/2 marks. 
-        
+        3. Diagram (2 marks): Hand-drawn diagram present with labels.
         RULES: Do not penalize for extra info.`;
-
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
-        markingScheme = `Discuss pathways of the corticospinal tract. Origin (3 marks), Pathway (6 marks), Decussation (2 marks), Lesions (4 marks).`;
+        markingScheme = `
+        Question: Discuss the pathways of the corticospinal tract.
+        Marking Scheme (Total 15 marks):
+        1. Origin (3 marks): Motor cortex.
+        2. Pathway (6 marks): Internal capsule, crus cerebri, pons, medulla.
+        3. Decussation (2 marks): Pyramidal decussation in medulla.
+        4. Lesions (4 marks): UMN vs LMN signs.`;
     } else {
         return res.status(400).json({ error: 'Invalid Exam ID' });
     }
@@ -46,20 +47,28 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
+    // --- THE DYNAMIC PROMPT ---
     const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
     
-    You must reply with ONLY a valid JSON object, without any markdown formatting or backticks. The JSON must have exactly this structure:
+    You must reply with ONLY a valid JSON object, without any markdown formatting or backticks. 
+
+    CRITICAL INSTRUCTION FOR BREAKDOWN: 
+    Look at the Marking Scheme above. The "breakdown" array in your JSON response MUST dynamically match the sections of the Marking Scheme. 
+    - If the scheme has "Boundaries" and "Contents", create 2 objects.
+    - If the scheme has "Origin", "Pathway", and "Lesions", create 3 objects.
+    - If the scheme has 5 sections, create 5 objects.
+    Extract the section names directly from the Marking Scheme and use them.
+
+    The JSON must have exactly this structure:
     {
         "score": [integer total score out of ${totalMarks}],
         "breakdown": [
-            { "section": "Boundaries", "score": "[X]/3", "rationale": "Write a detailed, paragraph-length explanation of what the student wrote for boundaries, what was correct, and what was missing." },
-            { "section": "Contents", "score": "[X]/5", "rationale": "Write a detailed, paragraph-length explanation of what the student wrote for contents, what was correct, and what was missing." },
-            { "section": "Diagram", "score": "[X]/2", "rationale": "Write a detailed explanation of the diagram quality and labeling." }
+            { "section": "[Section Name from Marking Scheme]", "score": "[X]/[Total Marks for this section]", "rationale": "Detailed paragraph of what they wrote, what was correct, and what was missing." }
         ],
-        "overallRationale": "Write a comprehensive 2-3 sentence summary of the student's overall performance, strengths, and weaknesses.",
-        "advice": "One short sentence of exam advice"
+        "overallRationale": "2-3 sentence summary of their performance.",
+        "advice": "One short sentence of exam advice."
     }
 
     CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array.`;
