@@ -3,13 +3,8 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // --- TEMPORARY HARDCODE FOR TESTING ---
-    // Paste your new Groq key inside the quotes below:
-    const apiKey = process.env.GROQ_API_KEY || "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"; 
-
-    if (!apiKey || apiKey === "PASTE_YOUR_NEW_GROQ_KEY_HERE") {
-        return res.status(500).json({ error: 'Groq API Key is missing.' });
-    }
+    // Your key is hardcoded right here. No Vercel environment variables needed.
+    const apiKey = "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";
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -58,7 +53,6 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                // Updated to a guaranteed working Groq Vision model
                 model: "llama-3.2-11b-vision-preview", 
                 messages: [
                     {
