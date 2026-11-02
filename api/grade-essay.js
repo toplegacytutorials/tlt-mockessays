@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your Gemini API key hardcoded. No Vercel settings needed.
+    // Your hardcoded key
     const apiKey = "AQ.Ab8RN6LGW7l5R5b2Ic5oNsUmYmW9eJR7mQ_SUHk4llBC2hAXjQ";
 
     let totalMarks = 10; 
@@ -36,18 +36,20 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    // Using gemini-1.5-flash-latest (Handles multiple images)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    // Notice we removed the ?key= from the URL
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
 
     try {
-        // Map ALL images you upload. No image limits.
         const imageParts = images.map(img => ({
             inline_data: { mime_type: mimeType, data: img }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey // <--- THE KEY IS NOW IN THE HEADER
+            },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
             })
