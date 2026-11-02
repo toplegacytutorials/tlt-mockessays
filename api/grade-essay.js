@@ -3,8 +3,8 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your key remains safely in the header
-    const apiKey = "AQ.Ab8RN6LGW7l5R5b2Ic5oNsUmYmW9eJR7mQ_SUHk4llBC2hAXjQ";
+    // Your Mistral key is hardcoded here
+    const apiKey = "mstrl_jUVKTm7uzfHyGpiELlX2rlhxpcFC0ubB_4az0F1";
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -36,37 +36,47 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    // --- FIX 1: Updated to a current, active model ---
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+    const url = `https://api.mistral.ai/v1/chat/completions`;
 
     try {
-        const imageParts = images.map(img => ({
-            inline_data: { mime_type: mimeType, data: img }
+        // Mistral supports up to 8 images per request.
+        const imageParts = images.slice(0, 8).map(img => ({
+            type: "image_url",
+            image_url: { url: `data:${mimeType};base64,${img}` }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-                // --- FIX 2: Key is sent via the required header ---
-                'x-goog-api-key': apiKey 
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
+                model: "pixtral-12b-2409", // Mistral's fast, free vision model
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: systemPrompt },
+                            ...imageParts
+                        ]
+                    }
+                ],
+                temperature: 0.1 
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
+            return res.status(500).json({ error: `Mistral API Error: ${data.error.message}` });
         }
         
-        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            return res.status(500).json({ error: "Gemini failed to read the image." });
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            return res.status(500).json({ error: "Mistral failed to read the images." });
         }
 
-        const responseText = data.candidates[0].content.parts[0].text;
+        const responseText = data.choices[0].message.content;
         
         const scoreMatch = responseText.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
         let score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
