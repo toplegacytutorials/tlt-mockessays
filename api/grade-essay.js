@@ -53,7 +53,8 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "llama-3.2-11b-vision-preview", 
+                // --- UPDATED MODEL NAME HERE ---
+                model: "qwen/qwen3.8-27b", 
                 messages: [
                     {
                         role: "user",
