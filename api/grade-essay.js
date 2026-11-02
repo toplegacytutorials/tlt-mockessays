@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your provided key is hardcoded here
+    // Your new Auth Key
     const apiKey = "AQ.Ab8RN6IVRk2byBj44dzJoNoaMz-YEYXv5tq810dRQJ6uKXvtw";
 
     let totalMarks = 10; 
@@ -13,15 +13,11 @@ export default async function handler(req, res) {
         totalMarks = 10;
         markingScheme = `
         Question: Discuss the boundaries and contents of the Carotid Triangle.
-        
         Marking Scheme (Total 10 marks):
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
-        3. Diagram (2 marks): 
-           - A hand-drawn diagram is present. If ANY drawing of the neck is present, award the 2 marks.
-        
-        RULES: Do not penalize for extra info.`;
-
+        3. Diagram (2 marks): Hand-drawn diagram present with labels.
+        `;
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
         markingScheme = `Discuss pathways of the corticospinal tract. Origin (3 marks), Pathway (6 marks), Decussation (2 marks), Lesions (4 marks).`;
@@ -59,8 +55,8 @@ export default async function handler(req, res) {
 
     CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array.`;
 
-    // Using Gemini 2.0 Flash. We pass the key in the URL for this specific key type.
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    // Using Gemini 2.0 Flash WITHOUT the ?key= URL parameter
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
 
     try {
         const imageParts = images.slice(0, 8).map(img => ({
@@ -70,7 +66,9 @@ export default async function handler(req, res) {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                // THE FIX: Using Bearer token for the new AQ. Auth keys
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }],
