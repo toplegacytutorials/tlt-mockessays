@@ -2,10 +2,13 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     const { examId, images, mimeType, autoZero } = req.body;
-    const apiKey = process.env.GROQ_API_KEY; 
+    
+    // --- TEMPORARY HARDCODE FOR TESTING ---
+    // Paste your new Groq key inside the quotes below:
+    const apiKey = process.env.GROQ_API_KEY || "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"; 
 
-    if (!apiKey) {
-        return res.status(500).json({ error: 'Groq API Key is missing in Vercel settings.' });
+    if (!apiKey || apiKey === "PASTE_YOUR_NEW_GROQ_KEY_HERE") {
+        return res.status(500).json({ error: 'Groq API Key is missing.' });
     }
 
     let totalMarks = 10; 
@@ -55,7 +58,8 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "meta-llama/llama-4-scout-17b-16e-instruct", 
+                // Updated to a guaranteed working Groq Vision model
+                model: "llama-3.2-11b-vision-preview", 
                 messages: [
                     {
                         role: "user",
