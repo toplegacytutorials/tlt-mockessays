@@ -10,7 +10,6 @@ export default async function handler(req, res) {
 
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
-        // STRICT, UNLABELED MARKING SCHEME
         markingScheme = `
         Question: Discuss the boundaries and contents of the Carotid Triangle.
         
@@ -26,7 +25,7 @@ export default async function handler(req, res) {
            - Lymphatics: Deep Cervical Lymph Nodes.
         3. Diagram (2 marks): Must show the triangle with its boundaries clearly labeled.
         
-        Rule: The student's essay perfectly matches this scheme. If they mention these structures, award the marks. Do not penalize them if their description is even more detailed (e.g., adding the roof or floor).`;
+        Rule: The student's essay perfectly matches this scheme. If they mention these structures, award the marks. Do not penalize them if their description is even more detailed.`;
 
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
@@ -74,7 +73,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "pixtral-large-latest", // <--- UPGRADED TO THE LARGE MODEL
+                model: "pixtral-12b-2409", // Reverted to the model that works on the free tier
                 messages: [
                     {
                         role: "user",
@@ -92,16 +91,21 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Mistral API Error: ${data.error.message}` });
+            return res.status(500).json({ error: `Mistral API Error: ${data.error.message || data.error}` });
         }
         
+        // SAFETY CHECK: Prevents the crash if the AI returns nothing
+        if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
+            return res.status(500).json({ error: "No valid response from Mistral. Please try again." });
+        }
+
         const responseText = data.choices[0].message.content;
         
         let parsedFeedback;
         try {
             parsedFeedback = JSON.parse(responseText);
         } catch (e) {
-            return res.status(500).json({ error: "Failed to parse AI response." });
+            return res.status(500).json({ error: "Failed to parse AI response. " + responseText });
         }
 
         return res.status(200).json({ 
