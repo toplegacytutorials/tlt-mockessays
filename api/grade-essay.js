@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your hardcoded key
+    // Your key remains safely in the header
     const apiKey = "AQ.Ab8RN6LGW7l5R5b2Ic5oNsUmYmW9eJR7mQ_SUHk4llBC2hAXjQ";
 
     let totalMarks = 10; 
@@ -36,8 +36,8 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    // Notice we removed the ?key= from the URL
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
+    // --- FIX 1: Updated to a current, active model ---
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
 
     try {
         const imageParts = images.map(img => ({
@@ -48,7 +48,8 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'x-goog-api-key': apiKey // <--- THE KEY IS NOW IN THE HEADER
+                // --- FIX 2: Key is sent via the required header ---
+                'x-goog-api-key': apiKey 
             },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
