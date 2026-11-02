@@ -11,20 +11,17 @@ export default async function handler(req, res) {
 
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
-        markingScheme = `Question: Discuss the boundaries and contents of the Carotid Triangle.
-        Boundaries (3 marks), Contents (5 marks), Diagram (2 marks).`;
+        markingScheme = `Discuss boundaries/contents of the Carotid Triangle.`;
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
-        markingScheme = `Question: Discuss the pathways of the corticospinal tract.
-        Origin (3 marks), Pathway (6 marks), Decussation (2 marks), Lesions (4 marks).`;
+        markingScheme = `Discuss pathways of the corticospinal tract.`;
     } else {
         return res.status(400).json({ error: 'Invalid Exam ID' });
     }
 
-    // HANDLE AUTO-ZERO (If they ran out of time)
     if (autoZero) {
         return res.status(200).json({
-            feedback: "Time expired. The assessment was automatically submitted with a score of 0.",
+            feedback: "Time expired or exam left. Score: 0.",
             score: 0,
             total: totalMarks
         });
@@ -34,16 +31,13 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay.
-    Read the text from the uploaded images and compare it strictly to this Marking Scheme:
-    ${markingScheme}
-    
-    Rules:
-    1. At the very top of your response, you MUST output exactly: "SCORE: [X]/${totalMarks}".
-    2. Then provide feedback using headers: "WHAT YOU GOT RIGHT:", "WHAT YOU MISSED:", and "EXAMINER ADVICE:".`;
+    // EXTREMELY FAST PROMPT
+    const systemPrompt = `Grade this handwritten essay based on: ${markingScheme}.
+    Output EXACTLY this format and nothing else:
+    SCORE: [X]/${totalMarks}
+    FEEDBACK: [One short sentence summarizing what they missed.]`;
 
     try {
-        // Prepare all images for Gemini
         const imageParts = images.map(img => ({
             inline_data: { mime_type: mimeType, data: img }
         }));
@@ -52,12 +46,7 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        { text: systemPrompt },
-                        ...imageParts // Spread all images into the request
-                    ]
-                }]
+                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
             })
         });
 
