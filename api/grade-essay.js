@@ -3,7 +3,8 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    const apiKey = "mstrl_jUVKTm7uzfHyGpiELlX2rlhxpcFC0ubB_4az0F1";
+    // Your provided key is hardcoded here
+    const apiKey = "AQ.Ab8RN6IVRk2byBj44dzJoNoaMz-YEYXv5tq810dRQJ6uKXvtw";
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -17,9 +18,7 @@ export default async function handler(req, res) {
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
         3. Diagram (2 marks): 
-           - A hand-drawn diagram is present in the student's work.
-           - RULE FOR DIAGRAM: If ANY drawing of the neck/triangle is present, and the student has listed the muscles (Digastric, Omohyoid, SCM, Stylohyoid) anywhere on the page, you MUST award the full 2/2 marks. 
-           - DO NOT attempt to trace the lines. Hand-drawn sketches are messy. Award the marks if the diagram exists.
+           - A hand-drawn diagram is present. If ANY drawing of the neck is present, award the 2 marks.
         
         RULES: Do not penalize for extra info.`;
 
@@ -42,7 +41,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    // NEW PROMPT: Strict addition rule
     const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
@@ -59,49 +57,41 @@ export default async function handler(req, res) {
         "advice": "One short sentence of exam advice"
     }
 
-    CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array. If the student gets 3/3, 5/5, and 2/2, the total "score" must be 10.`;
+    CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array.`;
 
-    const url = `https://api.mistral.ai/v1/chat/completions`;
+    // Using Gemini 2.0 Flash. We pass the key in the URL for this specific key type.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {
         const imageParts = images.slice(0, 8).map(img => ({
-            type: "image_url",
-            image_url: { url: `data:${mimeType};base64,${img}` }
+            inline_data: { mime_type: mimeType, data: img }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "pixtral-12b-2409",
-                messages: [
-                    {
-                        role: "user",
-                        content: [
-                            { type: "text", text: systemPrompt },
-                            ...imageParts
-                        ]
-                    }
-                ],
-                temperature: 0,
-                response_format: { type: "json_object" } 
+                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }],
+                generationConfig: {
+                    temperature: 0, 
+                    responseMimeType: "application/json" 
+                }
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Mistral API Error: ${data.error.message || data.error}` });
+            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
         }
         
-        if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
-            return res.status(500).json({ error: "No valid response from Mistral. Please try again." });
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            return res.status(500).json({ error: "Gemini failed to read the images." });
         }
 
-        const responseText = data.choices[0].message.content;
+        const responseText = data.candidates[0].content.parts[0].text;
         
         let parsedFeedback;
         try {
