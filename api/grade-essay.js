@@ -16,7 +16,10 @@ export default async function handler(req, res) {
         Marking Scheme (Total 10 marks):
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
-        3. Diagram (2 marks): Must show the triangle with labeled boundaries.
+        3. Diagram (2 marks): 
+           - A diagram of the triangle is present. 
+           - Look closely at the image. The student has explicitly labeled "Sternocleidomastoid", "Digastric", "Stylohyoid", and "Omohyoid" with lines pointing to the drawing.
+           - IF these labels are present in the diagram, you MUST award the full 2 marks. Do not penalize the drawing for being hand-drawn or sketched.
         
         RULES: Do not penalize for extra info (roof, floor, clinical correlations). If they have the core points, award full marks.`;
 
@@ -39,7 +42,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    // NEW PROMPT: Asking for a section-by-section breakdown
     const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
