@@ -14,31 +14,22 @@ export default async function handler(req, res) {
         Question: Discuss the boundaries and contents of the Carotid Triangle.
         
         Marking Scheme (Total 10 marks):
-        1. Boundaries (3 marks): 
-           - Superior: Posterior belly of Digastric and Stylohyoid muscle.
-           - Posterior: Anterior border of Sternocleidomastoid (SCM) muscle.
-           - Inferior: Superior belly of Omohyoid muscle.
-        2. Contents (5 marks): 
-           - Arterial: Common Carotid Artery.
-           - Venous: Internal Jugular Vein.
-           - Nerves: Vagus Nerve, Hypoglossal Nerve, Spinal Accessory Nerve, Ansa Cervicalis, Sympathetic Trunk.
-           - Lymphatics: Deep Cervical Lymph Nodes.
-        3. Diagram (2 marks): Must show the triangle with its boundaries clearly labeled.
+        1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
+        2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
+        3. Diagram (2 marks): Must show the triangle with labeled boundaries.
         
-        CRITICAL RULES FOR THE EXAMINER:
-        - DO NOT deduct marks for extra anatomical information. If the student includes the roof, floor, or clinical correlations, this is EXCELLENT and should be rewarded with full marks. 
-        - Be generous. If they have the 3 boundaries, the contents, and a diagram, they get 10/10.`;
+        RULES: Do not penalize for extra info (roof, floor, clinical correlations). If they have the core points, award full marks.`;
 
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
-        markingScheme = `Discuss pathways of the corticospinal tract. Origin: Motor cortex. Pathway: Internal capsule, crus cerebri, pons, medulla. Decussation: Pyramidal decussation. Lesions: UMN vs LMN signs.`;
+        markingScheme = `Discuss pathways of the corticospinal tract. Origin (3 marks), Pathway (6 marks), Decussation (2 marks), Lesions (4 marks).`;
     } else {
         return res.status(400).json({ error: 'Invalid Exam ID' });
     }
 
     if (autoZero) {
         return res.status(200).json({
-            feedback: "Time expired or exam left. Score: 0.",
+            feedback: { score: 0, breakdown: [{section: "Exam", score: "0/10", feedback: "Time expired or exam left."}], missed: ["Entire exam"], advice: "Complete the exam next time." },
             score: 0,
             total: totalMarks
         });
@@ -48,15 +39,20 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
+    // NEW PROMPT: Asking for a section-by-section breakdown
     const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
     
     You must reply with ONLY a valid JSON object, without any markdown formatting or backticks. The JSON must have exactly this structure:
     {
-        "score": [integer score out of ${totalMarks}],
-        "correct": ["List of things the student got right"],
-        "missed": ["List of things the student missed. If they got everything, say 'Nothing missed'"],
+        "score": [integer total score out of ${totalMarks}],
+        "breakdown": [
+            { "section": "Boundaries", "score": "[X]/3", "feedback": "Briefly say what they got right or wrong here." },
+            { "section": "Contents", "score": "[X]/5", "feedback": "Briefly say what they got right or wrong here." },
+            { "section": "Diagram", "score": "[X]/2", "feedback": "Briefly say if the diagram is present and labeled." }
+        ],
+        "missed": ["List any specific missing keywords, or write 'Nothing missed'"],
         "advice": "One short sentence of exam advice"
     }`;
 
