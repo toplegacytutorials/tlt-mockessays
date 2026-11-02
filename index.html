@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOP LEGACY TUTORIALS | PORTAL</title>
+    <title>TOP LEGACY TUTORIALS | ESSAY PORTAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
@@ -14,14 +14,14 @@
     <!-- LOGIN SECTION -->
     <div id="login-section" class="flex-grow flex items-center justify-center p-4 bg-slate-950">
         <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
-            <div class="w-16 h-16 bg-blue-900/50 text-blue-400 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-blue-500/30">
+            <div class="w-16 h-16 bg-blue-900/50 text-blue-400 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-blue-800/50">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
             </div>
             <h1 class="text-2xl font-bold text-center mb-2 text-white tracking-tight">TOP LEGACY TUTORIALS</h1>
             <p class="text-slate-400 text-center mb-6 text-sm">Enter your Authorized ID to Login</p>
             
             <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
-                <input type="text" id="student-id" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT3001000">
+                <input type="text" id="student-id" name="tlt_student_id" autocomplete="username" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT3001000">
                 <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Invalid ID</p>
                 
                 <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
@@ -31,7 +31,7 @@
 
     <!-- DASHBOARD SECTION -->
     <div id="dashboard-section" class="hidden flex-grow flex flex-col">
-        <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-md">
             <div>
                 <h1 class="font-bold text-xl tracking-tight text-white flex items-center gap-2">
                     TOP LEGACY TUTORIALS
@@ -89,7 +89,7 @@
                     <div onclick="openFolder('headneck')" class="bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 bg-blue-950 text-blue-400 rounded-xl flex items-center justify-center border border-blue-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
                             </div>
                             <div>
                                 <h4 class="font-bold text-white text-base">Gross Anatomy of the Head and Neck</h4>
@@ -103,7 +103,7 @@
                     <div onclick="openFolder('neuro')" class="bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 bg-indigo-950 text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
                             </div>
                             <div>
                                 <h4 class="font-bold text-white text-base">Neuroanatomy</h4>
@@ -115,7 +115,7 @@
                 </div>
             </div>
 
-            <!-- FOLDER CONTENTS VIEW (Hidden by default) -->
+            <!-- FOLDER CONTENTS VIEW -->
             <div id="folder-content-view" class="hidden space-y-6">
                 <button onclick="closeFolder()" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-blue-950/40 px-3 py-1.5 rounded-lg border border-blue-900/40 transition-colors">
                     ← Back to Folders
@@ -183,7 +183,6 @@
         function showDashboard(id) {
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
-            document.getElementById('dashboard-section').classList.add('flex');
             document.getElementById('display-id').innerText = id;
         }
 
