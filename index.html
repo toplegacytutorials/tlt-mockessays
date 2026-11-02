@@ -3,194 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOP LEGACY TUTORIALS | ESSAY PORTAL</title>
+    <title>TOP LEGACY TUTORIALS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #020617; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .breadcrumb-link { transition: color 0.2s; cursor: pointer; }
+        .breadcrumb-link:hover { color: #60a5fa; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
     <!-- LOGIN SECTION -->
-    <div id="login-section" class="flex-grow flex items-center justify-center p-4 bg-slate-950">
-        <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
+    <div id="login-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-8">
             <div class="w-16 h-16 bg-blue-900/50 text-blue-400 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-blue-800/50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
             </div>
-            <h1 class="text-2xl font-bold text-center mb-2 text-white tracking-tight">TOP LEGACY TUTORIALS</h1>
-            <p class="text-slate-400 text-center mb-6 text-sm">Enter your Authorized ID to Login</p>
-
+            <h1 class="text-2xl font-bold text-center mb-2 text-white">TOP LEGACY TUTORIALS</h1>
+            <p class="text-slate-400 text-center mb-6 text-sm">Enter your authorized Student ID to access mock exams.</p>
+            
             <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
-                <!-- Changed Placeholder here -->
                 <input type="text" id="student-id" name="tlt_student_id" autocomplete="username" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT300XXXX">
-                <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Invalid ID</p>
-
+                <p id="error-msg" class="text-xs text-red-400 font-medium mb-4 opacity-0 transition-opacity">Unauthorized ID.</p>
+                
                 <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
             </form>
         </div>
     </div>
 
     <!-- DASHBOARD SECTION -->
-    <div id="dashboard-section" class="hidden flex-grow flex flex-col">
-        <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-md">
+    <div id="dashboard-section" class="hidden">
+        <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-md flex-wrap gap-4">
             <div>
-                <h1 class="font-bold text-xl tracking-tight text-white flex items-center gap-2">
-                    TOP LEGACY TUTORIALS
-                </h1>
+                <h1 class="font-bold text-xl tracking-tight text-white">TOP LEGACY TUTORIALS</h1>
                 <p class="text-xs text-slate-400 mt-0.5">Authorized Mock Portal</p>
             </div>
             <div class="flex items-center gap-3">
                 <span id="display-id" class="text-sm font-bold bg-slate-950 px-3 py-1 rounded-full border border-slate-800 font-mono text-blue-400"></span>
-                <button onclick="logout()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">LOGOUT</button>
+                <button onclick="logout()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">Logout</button>
             </div>
         </header>
 
-        <main class="max-w-4xl mx-auto w-full p-6 space-y-8 mt-4">
+        <main class="max-w-5xl mx-auto p-6 mt-4">
 
-            <!-- AI ESSAY GRADER MODULE -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden relative">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
-                <div class="p-6 md:p-8">
-                    <div class="mb-6">
-                        <h2 class="font-bold text-xl text-white mb-2">AI Essay Grader Submission</h2>
-                        <p class="text-sm text-slate-400 leading-relaxed">Upload a clear photo of your handwritten assignment. The AI will evaluate your answers against the current marking scheme.</p>
+            <!-- SCORE HISTORY SECTION (Recent Activity) -->
+            <div id="analytics-container" class="mb-8 hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" /></svg>
+                        Recent Activity
+                    </h3>
+                    <div class="flex items-center gap-3">
+                        <button id="view-all-btn" onclick="openHistoryModal()" class="text-[11px] text-blue-400 hover:text-blue-300 font-semibold transition-colors">View All History</button>
                     </div>
-
-                    <div class="flex flex-col sm:flex-row gap-4 items-center bg-slate-950 p-4 rounded-xl border border-slate-800/80">
-                        <input type="file" id="essay-image" accept="image/*" class="block w-full text-sm text-slate-400 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all cursor-pointer">
-                        <button id="grade-btn" onclick="processEssay()" class="w-full sm:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(5,150,105,0.4)] transition-all whitespace-nowrap active:scale-95">
-                            Submit for Grading
-                        </button>
-                    </div>
-
-                    <div id="loading-state" class="hidden mt-6 text-sm text-blue-400 font-medium flex items-center justify-center gap-3 bg-blue-950/20 py-4 rounded-lg border border-blue-900/30">
-                        Scanning handwriting & verifying blueprint...
-                    </div>
-
-                    <div id="ai-feedback-box" class="hidden mt-6 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
-                        <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-2">
-                            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Official Result</h4>
-                        </div>
-                        <div id="ai-feedback-content" class="p-6 text-sm text-slate-300 space-y-4 whitespace-pre-line font-mono leading-relaxed"></div>
-                    </div>
+                </div>
+                <div id="history-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+            
+            <!-- BREADCRUMBS & SEARCH -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6 border-t border-slate-800/80 pt-6">
+                <div id="breadcrumb-container" class="flex items-center flex-wrap gap-2 text-sm font-medium text-slate-400">
+                    <!-- Injected via JS -->
+                </div>
+                <div class="relative w-full md:w-72">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 absolute left-3.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Search all exams..." class="w-full pl-11 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors text-sm">
                 </div>
             </div>
 
-            <!-- FOLDERS VIEW -->
-            <div id="main-view" class="space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 class="font-bold text-lg text-white">Home</h3>
-                    <div class="w-full sm:w-72">
-                        <input type="text" id="search-bar" oninput="filterFolders()" placeholder="Search all exams..." class="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-slate-600">
-                    </div>
-                </div>
-
-                <div id="folder-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Folder 1 -->
-                    <div onclick="openFolder('headneck')" class="bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-950 text-blue-400 rounded-xl flex items-center justify-center border border-blue-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-base">Gross Anatomy of the Head and Neck</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">1 Assessment available</p>
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                    </div>
-
-                    <!-- Folder 2 -->
-                    <div onclick="openFolder('neuro')" class="bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-indigo-950 text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-base">Neuroanatomy</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">1 Assessment available</p>
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                    </div>
-                </div>
+            <!-- DYNAMIC CONTENT CONTAINER -->
+            <div id="exam-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Injected via JS -->
             </div>
 
-            <!-- FOLDER CONTENTS VIEW -->
-            <div id="folder-content-view" class="hidden space-y-6">
-                <button onclick="closeFolder()" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-blue-950/40 px-3 py-1.5 rounded-lg border border-blue-900/40 transition-colors">
-                    ← Back to Folders
-                </button>
-                <h3 id="folder-title" class="font-bold text-xl text-white"></h3>
-                <div id="folder-exams-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Injected dynamically -->
-                </div>
+            <div id="no-results" class="hidden text-center py-16">
+                <p class="text-slate-500 text-sm">No matching assessments found.</p>
             </div>
 
         </main>
     </div>
 
+    <!-- FULL HISTORY MODAL DIALOG -->
+    <div id="history-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900 sticky top-0 z-10">
+                <h3 class="font-bold text-white text-base">Complete Attempt History</h3>
+                <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            </div>
+            <div id="modal-history-list" class="p-6 overflow-y-auto custom-scroll flex-1">
+                <!-- Injected via JS -->
+            </div>
+            <div class="px-6 py-3 bg-slate-950/50 border-t border-slate-800 flex justify-end">
+                <button onclick="closeHistoryModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const SESSION_DURATION = 60 * 60 * 1000;
-
-        // -------- SESSION HELPERS --------
-        function readSession() {
-            try {
-                const raw = localStorage.getItem('tlt_active_session');
-                if (!raw) return null;
-                const parsed = JSON.parse(raw);
-                if (!parsed || typeof parsed !== 'object' || !parsed.id || !parsed.time) return null;
-                if (Date.now() - parsed.time >= SESSION_DURATION) return null; // expired
-                return parsed;
-            } catch (e) {
-                return null; // corrupted JSON
+        // --- EXAM DATABASE ---
+        const exams = [
+            { 
+                id: 'carotid_triangle', title: 'ANATOMY - CAROTID TRIANGLE (ESSAY)', desc: '1 Essay • 30 mins', 
+                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head & Neck', 
+                file: 'essay_exam.html?exam=carotid_triangle', color: 'blue' 
+            },
+            { 
+                id: 'neuro_corticospinal', title: 'NEUROANATOMY - CORTICOSPINAL TRACT (ESSAY)', desc: '1 Essay • 45 mins', 
+                subject: 'Anatomy', sub: 'Neuroanatomy', topic: 'Central Nervous System', 
+                file: 'essay_exam.html?exam=neuro_corticospinal', color: 'indigo' 
             }
-        }
+        ];
 
-        // -------- ON LOAD --------
-        window.onload = () => {
-            // We removed the auto-fill logic here so it stays blank on refresh.
-            const session = readSession();
-            if (session) {
-                showDashboard(session.id);
-            } else {
-                // Stale or missing session: quietly clear it. DO NOT reload.
-                localStorage.removeItem('tlt_active_session');
+        let currentPath = ['Home']; 
+        let isSearching = false;
+        const SESSION_DURATION_MS = 60 * 60 * 60 * 1000; // 60 Hours
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const rawSession = localStorage.getItem('tlt_session');
+            if (rawSession) {
+                try {
+                    const session = JSON.parse(rawSession);
+                    if (Date.now() - session.timestamp < SESSION_DURATION_MS) {
+                        showDashboard(session.id);
+                        return;
+                    }
+                } catch(e) {}
+                localStorage.removeItem('tlt_session');
             }
-        };
+        });
 
-        // -------- ID VALIDATION --------
         function checkId() {
             const input = document.getElementById('student-id').value.trim().toUpperCase();
             const btn = document.getElementById('login-btn');
             const error = document.getElementById('error-msg');
-
-            let isValid = false;
+            
+            // Validates TLT3001000 up to TLT3005000
             const match = input.match(/^TLT300(\d{4})$/);
+            let isValid = false;
             if (match) {
                 const num = parseInt(match[1], 10);
-                if (num >= 1000 && num <= 5000) {
-                    isValid = true;
-                }
+                if (num >= 1000 && num <= 5000) isValid = true;
             }
 
-            if (input && !isValid) error.classList.remove('opacity-0');
+            if (input !== "" && !isValid) error.classList.remove('opacity-0');
             else error.classList.add('opacity-0');
 
             if (isValid) {
                 btn.disabled = false;
-                btn.className = "w-full py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg transition-all";
+                btn.className = "w-full py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-900/50 transition-all active:scale-[0.98]";
             } else {
                 btn.disabled = true;
                 btn.className = "w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all";
             }
         }
 
-        // -------- AUTH --------
         function login() {
             const id = document.getElementById('student-id').value.trim().toUpperCase();
-            // We removed the "remember ID" save logic here
-            localStorage.setItem('tlt_active_session', JSON.stringify({ id: id, time: Date.now() }));
+            localStorage.setItem('tlt_session', JSON.stringify({ id: id, timestamp: Date.now() }));
             showDashboard(id);
         }
 
@@ -198,179 +173,352 @@
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
             document.getElementById('display-id').innerText = id;
+            loadAnalytics(id);
+            renderBreadcrumbs();
+            renderGrid();
         }
 
         function logout() {
-            localStorage.removeItem('tlt_active_session');
-            // Reload ONLY on explicit user logout
-            window.location.reload();
+            localStorage.removeItem('tlt_session');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('student-id').value = '';
+            document.getElementById('login-btn').disabled = true;
+            document.getElementById('login-btn').className = "w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all";
+            
+            currentPath = ['Home'];
+            isSearching = false;
+            document.getElementById('search-bar').value = '';
         }
 
-        // -------- FOLDERS --------
-        function openFolder(category) {
-            // Guard: session may have expired while browsing
-            if (!readSession()) {
-                alert("Your session has expired. Please log in again.");
-                logout();
-                return;
-            }
+        // --- BREADCRUMB & NAVIGATION LOGIC ---
+        function renderBreadcrumbs() {
+            const container = document.getElementById('breadcrumb-container');
+            container.innerHTML = '';
+            
+            currentPath.forEach((crumb, index) => {
+                const isLast = index === currentPath.length - 1;
+                const span = document.createElement('span');
+                span.innerText = crumb;
+                
+                if (isLast && !isSearching) {
+                    span.className = "text-white font-bold";
+                } else {
+                    span.className = "breadcrumb-link";
+                    span.onclick = () => {
+                        currentPath = currentPath.slice(0, index + 1);
+                        isSearching = false;
+                        document.getElementById('search-bar').value = '';
+                        renderBreadcrumbs();
+                        renderGrid();
+                    };
+                }
+                container.appendChild(span);
 
-            document.getElementById('main-view').classList.add('hidden');
-            const content = document.getElementById('folder-content-view');
-            content.classList.remove('hidden');
-
-            const title = document.getElementById('folder-title');
-            const list = document.getElementById('folder-exams-list');
-
-            if (category === 'headneck') {
-                title.innerText = "Gross Anatomy of the Head and Neck";
-                list.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-blue-500/50 transition-colors">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-900/30 px-2 py-1 rounded border border-rose-800/30 mb-3 inline-block">Head & Neck</span>
-                        <h4 class="font-bold text-white mb-1">Triangles & Cranial Nerves</h4>
-                        <p class="text-xs text-slate-400 mb-4">40 Questions • Exam Blueprint</p>
-                        <a href="headneck_mock.html" class="block text-center text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
-                    </div>
-                `;
-            } else if (category === 'neuro') {
-                title.innerText = "Neuroanatomy";
-                list.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded border border-indigo-800/30 mb-3 inline-block">Neuroanatomy</span>
-                        <h4 class="font-bold text-white mb-1">Brainstem & Tract Lesions</h4>
-                        <p class="text-xs text-slate-400 mb-4">50 Questions • Exam Blueprint</p>
-                        <a href="brainstem_mock.html" class="block text-center text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
-                    </div>
-                `;
-            }
-        }
-
-        function closeFolder() {
-            document.getElementById('folder-content-view').classList.add('hidden');
-            document.getElementById('main-view').classList.remove('hidden');
-        }
-
-        function filterFolders() {
-            const query = document.getElementById('search-bar').value.toLowerCase();
-            const folders = document.getElementById('folder-grid').children;
-
-            for (let folder of folders) {
-                const text = folder.innerText.toLowerCase();
-                folder.style.display = text.includes(query) ? "flex" : "none";
-            }
-        }
-
-        // -------- AI GRADER (proxied) --------
-        // NOTE: The API key has been REMOVED from client-side code.
-        // The endpoint below should be your own backend route that holds the key server-side.
-        const GRADER_ENDPOINT = "/api/grade-essay";
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
+                if (!isLast) {
+                    const sep = document.createElement('span');
+                    sep.innerText = '/';
+                    sep.className = "text-slate-600 mx-1";
+                    container.appendChild(sep);
+                }
             });
         }
 
-        async function processEssay() {
-            // Session guard before hitting the API
-            if (!readSession()) {
-                alert("Your session has expired. Please log in again.");
-                logout();
+        function navigateTo(pathArray) {
+            currentPath = pathArray;
+            isSearching = false;
+            document.getElementById('search-bar').value = '';
+            renderBreadcrumbs();
+            renderGrid();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-bar').value.toLowerCase().trim();
+            isSearching = query.length > 0;
+            renderGrid();
+        }
+
+        // --- DYNAMIC GRID RENDERING ---
+        function renderGrid() {
+            const grid = document.getElementById('exam-grid');
+            const noResults = document.getElementById('no-results');
+            grid.innerHTML = '';
+            let html = '';
+            let count = 0;
+
+            const query = document.getElementById('search-bar').value.toLowerCase().trim();
+
+            if (isSearching && query) {
+                const filtered = exams.filter(e => 
+                    e.title.toLowerCase().includes(query) || 
+                    (e.topic && e.topic.toLowerCase().includes(query)) || 
+                    e.subject.toLowerCase().includes(query) ||
+                    e.sub.toLowerCase().includes(query)
+                );
+                filtered.forEach(e => { html += createExamCard(e); count++; });
+            
+            } else {
+                let filtered = exams;
+
+                if (currentPath.length > 1) filtered = filtered.filter(e => e.subject === currentPath[1]);
+                if (currentPath.length > 2) filtered = filtered.filter(e => e.sub === currentPath[2]);
+                if (currentPath.length > 3) filtered = filtered.filter(e => e.topic === currentPath[3]);
+
+                if (currentPath.length === 1) {
+                    const subjects = [...new Set(exams.map(e => e.subject))];
+                    subjects.forEach(sub => {
+                        const countExams = exams.filter(e => e.subject === sub).length;
+                        const subjectColor = exams.find(e => e.subject === sub).color;
+                        html += createFolderCard(sub, `${countExams} Assessments available`, ['Home', sub], subjectColor);
+                        count++;
+                    });
+                } else if (currentPath.length === 2) {
+                    const subs = [...new Set(filtered.map(e => e.sub))];
+                    subs.forEach(sub => {
+                        const countExams = filtered.filter(e => e.sub === sub).length;
+                        const subjectColor = exams.find(e => e.subject === currentPath[1]).color;
+                        html += createFolderCard(sub, `${countExams} Assessments available`, ['Home', currentPath[1], sub], subjectColor);
+                        count++;
+                    });
+                } else if (currentPath.length === 3) {
+                    const topics = [...new Set(filtered.map(e => e.topic).filter(Boolean))];
+                    if (topics.length > 0) {
+                        topics.forEach(top => {
+                            const countExams = filtered.filter(e => e.topic === top).length;
+                            const subjectColor = exams.find(e => e.subject === currentPath[1]).color;
+                            html += createFolderCard(top, `${countExams} Assessments available`, ['Home', currentPath[1], currentPath[2], top], subjectColor);
+                            count++;
+                        });
+                    } else {
+                        filtered.forEach(e => { html += createExamCard(e); count++; });
+                    }
+                } else if (currentPath.length === 4) {
+                    filtered.forEach(e => { html += createExamCard(e); count++; });
+                }
+            }
+
+            if (count === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                grid.innerHTML = html;
+            }
+        }
+
+        function createFolderCard(title, subtitle, path, color = 'blue') {
+            const pathString = JSON.stringify(path).replace(/"/g, '&quot;');
+            
+            let iconBg, iconColor, hoverBorder, groupHoverText;
+            if (color === 'emerald') {
+                iconBg = 'bg-emerald-900/20 border-emerald-800/50';
+                iconColor = 'text-emerald-400';
+                hoverBorder = 'hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)]';
+                groupHoverText = 'group-hover:text-emerald-400';
+            } else if (color === 'indigo') {
+                iconBg = 'bg-indigo-900/20 border-indigo-800/50';
+                iconColor = 'text-indigo-400';
+                hoverBorder = 'hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.1)]';
+                groupHoverText = 'group-hover:text-indigo-400';
+            } else {
+                iconBg = 'bg-blue-900/20 border-blue-800/50';
+                iconColor = 'text-blue-400';
+                hoverBorder = 'hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]';
+                groupHoverText = 'group-hover:text-blue-400';
+            }
+
+            return `
+                <div onclick="navigateTo(${pathString})" class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 p-6 relative overflow-hidden ${hoverBorder} cursor-pointer transition-all group active:scale-[0.98]">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 rounded-lg ${iconBg} border flex items-center justify-center ${iconColor} ${groupHoverText} transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600 ${groupHoverText} transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1 text-white ${groupHoverText} transition-colors">${title}</h3>
+                    <p class="text-slate-400 text-sm">${subtitle}</p>
+                </div>
+            `;
+        }
+
+        function createExamCard(e) {
+            const isBlue = e.color === 'blue';
+            const isIndigo = e.color === 'indigo';
+            
+            let badgeClass = isBlue ? 'text-blue-400 bg-blue-900/30 border-blue-800/30' : 
+                             isIndigo ? 'text-indigo-400 bg-indigo-900/30 border-indigo-800/30' : 
+                             'text-emerald-400 bg-emerald-900/30 border-emerald-800/30';
+                             
+            let btnClass = isBlue ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/25' : 
+                           isIndigo ? 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/25' : 
+                           'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/25';
+            
+            const pathText = e.topic ? `${e.sub} • ${e.topic}` : e.sub;
+
+            return `
+                <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 p-6 relative overflow-hidden flex flex-col h-full hover:border-slate-700 transition-colors">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider ${badgeClass} px-2 py-1 rounded border w-max">${e.subject}</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1 text-white flex-1 leading-tight">${e.title}</h3>
+                    <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">${pathText}</p>
+                    <p class="text-slate-400 text-sm mb-6">${e.desc}</p>
+                    <a href="${e.file}" class="block w-full text-center text-white font-medium py-2.5 rounded-lg transition-colors shadow-lg ${btnClass}">Start Exam</a>
+                </div>
+            `;
+        }
+
+        // --- ANALYTICS ---
+        function loadAnalytics(studentId) {
+            const historyGrid = document.getElementById('history-grid');
+            const analyticsContainer = document.getElementById('analytics-container');
+            const viewAllBtn = document.getElementById('view-all-btn');
+            historyGrid.innerHTML = '';
+            
+            const rawHistory = localStorage.getItem('tlt_score_history_' + studentId);
+            const history = rawHistory ? JSON.parse(rawHistory) : [];
+
+            if (history.length > 0) {
+                analyticsContainer.classList.remove('hidden');
+                if (history.length > 2) viewAllBtn.classList.remove('hidden');
+                else viewAllBtn.classList.add('hidden');
+
+                history.slice(0, 2).forEach(item => {
+                    const scoreColor = item.percent >= 70 ? 'text-green-400' : item.percent >= 50 ? 'text-yellow-400' : 'text-red-400';
+                    
+                    const examData = exams.find(x => 
+                        item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || 
+                        x.title.toLowerCase().includes(item.examTitle.toLowerCase())
+                    );
+                    
+                    const pathText = examData ? (examData.topic ? `${examData.sub} • ${examData.topic}` : examData.sub) : 'General';
+
+                    historyGrid.innerHTML += `
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-md">
+                            <div class="flex justify-between items-center text-[11px] text-slate-500 mb-1">
+                                <span>${item.date}</span>
+                                <span>${item.time || ''}</span>
+                            </div>
+                            <h4 class="font-bold text-white text-sm truncate">${item.examTitle}</h4>
+                            <p class="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-2">${pathText}</p>
+                            <div class="flex items-end justify-between">
+                                <span class="text-2xl font-black ${scoreColor}">${item.percent}%</span>
+                                <span class="text-xs font-mono text-slate-400">${item.score}/${item.total} pts</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                analyticsContainer.classList.add('hidden');
+            }
+        }
+
+        function openHistoryModal() {
+            const modal = document.getElementById('history-modal');
+            const list = document.getElementById('modal-history-list');
+            const currentId = document.getElementById('display-id').innerText;
+            list.innerHTML = '';
+
+            const rawHistory = localStorage.getItem('tlt_score_history_' + currentId);
+            const history = rawHistory ? JSON.parse(rawHistory) : [];
+
+            if (history.length === 0) {
+                list.innerHTML = '<p class="text-slate-500 text-center py-4">No history yet.</p>';
+                modal.classList.remove('hidden');
                 return;
             }
 
-            const fileInput = document.getElementById('essay-image');
-            const loadingState = document.getElementById('loading-state');
-            const feedbackBox = document.getElementById('ai-feedback-box');
-            const feedbackContent = document.getElementById('ai-feedback-content');
-            const gradeBtn = document.getElementById('grade-btn');
+            const grouped = {};
 
-            if (!fileInput.files.length) {
-                alert("Please upload a picture of your handwritten essay first.");
-                return;
-            }
+            history.forEach(item => {
+                const examData = exams.find(x => 
+                    item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || 
+                    x.title.toLowerCase().includes(item.examTitle.toLowerCase())
+                );
+                
+                const subj = item.subject || examData?.subject || 'Other';
+                const sub = examData?.sub || 'General';
+                const topic = examData?.topic || 'General';
+                const title = item.examTitle || 'Unknown Exam';
 
-            gradeBtn.disabled = true;
-            gradeBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            loadingState.classList.remove('hidden');
-            feedbackBox.classList.add('hidden');
+                if (!grouped[subj]) grouped[subj] = {};
+                if (!grouped[subj][sub]) grouped[subj][sub] = {};
+                if (!grouped[subj][sub][topic]) grouped[subj][sub][topic] = {};
+                if (!grouped[subj][sub][topic][title]) grouped[subj][sub][topic][title] = [];
 
-            try {
-                const base64Image = await fileToBase64(fileInput.files[0]);
+                grouped[subj][sub][topic][title].push(item);
+            });
 
-                const markingScheme = `
-                Question: Discuss the boundaries and contents of the Carotid Triangle.
-                Total Marks: 10
-                Required Keywords:
-                - Superior Belly of Omohyoid (1 mark)
-                - Posterior Belly of Digastric (1 mark)
-                - Anterior border of Sternocleidomastoid (1 mark)
-                - Common Carotid Artery (1 mark)
-                - Internal Jugular Vein (1 mark)
-                - Vagus Nerve / CN X (1 mark)
-                - Ansa Cervicalis (1 mark)
-                - Hypoglossal Nerve / CN XII (1 mark)
-                - Diagram (2 marks). If no diagram is detected, state: "Diagram missing: -2 marks."
+            for (const [subjectName, subs] of Object.entries(grouped)) {
+                const isBlue = subjectName === 'Anatomy';
+                const subjectColor = isBlue ? 'text-blue-400' : 'text-emerald-400';
+                const subjectBorder = isBlue ? 'border-blue-900/50' : 'border-emerald-900/50';
+
+                let groupHTML = `
+                    <div class="mb-8">
+                        <h4 class="text-sm font-bold uppercase tracking-widest ${subjectColor} mb-4 border-b ${subjectBorder} pb-2">${subjectName}</h4>
                 `;
 
-                const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay.
-                Read the image text and compare it strictly to this Marking Scheme:
-                ${markingScheme}
+                for (const [subName, topics] of Object.entries(subs)) {
+                    if (subName !== 'General') {
+                        groupHTML += `
+                            <div class="mb-5 ml-2">
+                                <h5 class="text-[13px] font-bold text-slate-200 uppercase tracking-wide mb-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
+                                    ${subName}
+                                </h5>
+                        `;
+                    } else {
+                        groupHTML += `<div class="mb-5 ml-2">`;
+                    }
 
-                Rules:
-                1. Only award marks for exact or synonymous anatomical matches to the scheme.
-                2. Do not give free marks for general knowledge.
-                3. Output exactly like this (use uppercase headers, do not use markdown bolding like **):
+                    for (const [topicName, titles] of Object.entries(topics)) {
+                        if (topicName !== 'General') {
+                            groupHTML += `
+                                <div class="ml-6 mb-3">
+                                    <h6 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 border-l-2 border-slate-700 pl-2">${topicName}</h6>
+                            `;
+                        } else {
+                            groupHTML += `<div class="ml-6 mb-3">`;
+                        }
 
-                SCORE: [X/10]
+                        for (const [titleName, attempts] of Object.entries(titles)) {
+                            groupHTML += `
+                                <div class="ml-2 mb-3">
+                                    <h6 class="text-xs font-semibold text-white mb-2">${titleName}</h6>
+                                    <div class="space-y-2 border-l-2 border-slate-800 pl-4">
+                            `;
 
-                WHAT YOU GOT RIGHT:
-                - [Point 1]
-                - [Point 2]
+                            attempts.forEach(item => {
+                                const scoreColor = item.percent >= 70 ? 'text-green-400' : item.percent >= 50 ? 'text-yellow-400' : 'text-red-400';
+                                groupHTML += `
+                                    <div class="bg-slate-950 border border-slate-800/80 rounded-lg p-3 flex justify-between items-center hover:border-slate-700 transition-colors">
+                                        <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            ${item.date} <span class="mx-0.5">•</span> ${item.time || ''}
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <span class="text-[11px] font-mono text-slate-500">${item.score}/${item.total} pts</span>
+                                            <span class="text-sm font-bold ${scoreColor} w-12 text-right">${item.percent}%</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
 
-                WHAT YOU MISSED:
-                - [Point 1]
-
-                EXAMINER ADVICE:
-                [One sentence of clinical or exam advice]`;
-
-                // Calls your backend proxy, NOT Google directly.
-                const response = await fetch(GRADER_ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: systemPrompt,
-                        image: base64Image,
-                        mimeType: "image/jpeg"
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error("Grader service returned " + response.status);
+                            groupHTML += `</div></div>`;
+                        }
+                        groupHTML += `</div>`;
+                    }
+                    groupHTML += `</div>`;
                 }
-
-                const data = await response.json();
-                const feedbackText = data.feedback || (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text);
-
-                if (feedbackText) {
-                    feedbackContent.innerText = feedbackText;
-                    feedbackBox.classList.remove('hidden');
-                } else {
-                    throw new Error("AI could not process the image.");
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert("An error occurred. Make sure the image is clear and try again.");
-            } finally {
-                loadingState.classList.add('hidden');
-                gradeBtn.disabled = false;
-                gradeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                fileInput.value = '';
+                groupHTML += `</div>`;
+                list.innerHTML += groupHTML;
             }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('history-modal').classList.add('hidden');
         }
     </script>
 </body>
