@@ -3,8 +3,8 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your key is hardcoded right here. No Vercel environment variables needed.
-    const apiKey = "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";
+    // Your Gemini API key hardcoded. No Vercel settings needed.
+    const apiKey = "AQ.Ab8RN6LGW7l5R5b2Ic5oNsUmYmW9eJR7mQ_SUHk4llBC2hAXjQ";
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -36,49 +36,34 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    const url = `https://api.groq.com/openai/v1/chat/completions`;
+    // Using gemini-1.5-flash-latest (Handles multiple images)
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     try {
-        const imageMessages = images.map(img => ({
-            type: "image_url",
-            image_url: {
-                url: `data:${mimeType};base64,${img}`
-            }
+        // Map ALL images you upload. No image limits.
+        const imageParts = images.map(img => ({
+            inline_data: { mime_type: mimeType, data: img }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                // --- UPDATED MODEL NAME HERE ---
-                model: "qwen/qwen3.8-27b", 
-                messages: [
-                    {
-                        role: "user",
-                        content: [
-                            { type: "text", text: systemPrompt },
-                            ...imageMessages
-                        ]
-                    }
-                ],
-                temperature: 0.1 
+                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Groq API Error: ${data.error.message}` });
+            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
         }
         
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            return res.status(500).json({ error: "Groq failed to read the image." });
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            return res.status(500).json({ error: "Gemini failed to read the image." });
         }
 
-        const responseText = data.choices[0].message.content;
+        const responseText = data.candidates[0].content.parts[0].text;
         
         const scoreMatch = responseText.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
         let score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
