@@ -19,13 +19,15 @@ export default async function handler(req, res) {
            - Posterior: Anterior border of Sternocleidomastoid (SCM) muscle.
            - Inferior: Superior belly of Omohyoid muscle.
         2. Contents (5 marks): 
-           - Arterial: Common Carotid Artery (bifurcating into Internal and External).
+           - Arterial: Common Carotid Artery.
            - Venous: Internal Jugular Vein.
            - Nerves: Vagus Nerve, Hypoglossal Nerve, Spinal Accessory Nerve, Ansa Cervicalis, Sympathetic Trunk.
            - Lymphatics: Deep Cervical Lymph Nodes.
         3. Diagram (2 marks): Must show the triangle with its boundaries clearly labeled.
         
-        Rule: The student's essay perfectly matches this scheme. If they mention these structures, award the marks. Do not penalize them if their description is even more detailed.`;
+        CRITICAL RULES FOR THE EXAMINER:
+        - DO NOT deduct marks for extra anatomical information. If the student includes the roof, floor, or clinical correlations, this is EXCELLENT and should be rewarded with full marks. 
+        - Be generous. If they have the 3 boundaries, the contents, and a diagram, they get 10/10.`;
 
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
@@ -46,15 +48,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
-    Read the text from the images and compare it strictly to this Marking Scheme:
+    const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
+    Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
     
     You must reply with ONLY a valid JSON object, without any markdown formatting or backticks. The JSON must have exactly this structure:
     {
         "score": [integer score out of ${totalMarks}],
         "correct": ["List of things the student got right"],
-        "missed": ["List of things the student missed"],
+        "missed": ["List of things the student missed. If they got everything, say 'Nothing missed'"],
         "advice": "One short sentence of exam advice"
     }`;
 
@@ -73,7 +75,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "pixtral-12b-2409", // Reverted to the model that works on the free tier
+                model: "pixtral-12b-2409",
                 messages: [
                     {
                         role: "user",
@@ -94,7 +96,6 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: `Mistral API Error: ${data.error.message || data.error}` });
         }
         
-        // SAFETY CHECK: Prevents the crash if the AI returns nothing
         if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
             return res.status(500).json({ error: "No valid response from Mistral. Please try again." });
         }
