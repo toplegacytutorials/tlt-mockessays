@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Read the key from Vercel
+    // This pulls your saved OpenRouter key from Vercel
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
@@ -81,8 +81,8 @@ export default async function handler(req, res) {
                 'X-Title': 'TLT Mock Essays'
             },
             body: JSON.stringify({
-                // CORRECTED MODEL NAME
-                model: "qwen/qwen2.5-vl-7b-instruct:free",
+                // UPDATED MODEL ID
+                model: "qwen/qwen2.5-vl-72b-instruct:free",
                 messages: [
                     {
                         role: "user",
