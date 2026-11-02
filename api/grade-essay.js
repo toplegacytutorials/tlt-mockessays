@@ -3,7 +3,6 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your Mistral key
     const apiKey = "mstrl_jUVKTm7uzfHyGpiELlX2rlhxpcFC0ubB_4az0F1";
 
     let totalMarks = 10; 
@@ -11,7 +10,24 @@ export default async function handler(req, res) {
 
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
-        markingScheme = `Discuss boundaries/contents of the Carotid Triangle. Boundaries: Superior belly of omohyoid, posterior belly of digastric, anterior border of SCM. Contents: Common carotid artery, internal jugular vein, vagus nerve, ansa cervicalis, hypoglossal nerve.`;
+        // STRICT, UNLABELED MARKING SCHEME
+        markingScheme = `
+        Question: Discuss the boundaries and contents of the Carotid Triangle.
+        
+        Marking Scheme (Total 10 marks):
+        1. Boundaries (3 marks): 
+           - Superior: Posterior belly of Digastric and Stylohyoid muscle.
+           - Posterior: Anterior border of Sternocleidomastoid (SCM) muscle.
+           - Inferior: Superior belly of Omohyoid muscle.
+        2. Contents (5 marks): 
+           - Arterial: Common Carotid Artery (bifurcating into Internal and External).
+           - Venous: Internal Jugular Vein.
+           - Nerves: Vagus Nerve, Hypoglossal Nerve, Spinal Accessory Nerve, Ansa Cervicalis, Sympathetic Trunk.
+           - Lymphatics: Deep Cervical Lymph Nodes.
+        3. Diagram (2 marks): Must show the triangle with its boundaries clearly labeled.
+        
+        Rule: The student's essay perfectly matches this scheme. If they mention these structures, award the marks. Do not penalize them if their description is even more detailed (e.g., adding the roof or floor).`;
+
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
         markingScheme = `Discuss pathways of the corticospinal tract. Origin: Motor cortex. Pathway: Internal capsule, crus cerebri, pons, medulla. Decussation: Pyramidal decussation. Lesions: UMN vs LMN signs.`;
@@ -31,7 +47,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    // Structured prompt for JSON output
     const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it strictly to this Marking Scheme:
     ${markingScheme}
@@ -59,7 +74,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "pixtral-12b-2409",
+                model: "pixtral-large-latest", // <--- UPGRADED TO THE LARGE MODEL
                 messages: [
                     {
                         role: "user",
@@ -69,8 +84,8 @@ export default async function handler(req, res) {
                         ]
                     }
                 ],
-                temperature: 0, // <--- FIXED: Makes scoring deterministic
-                response_format: { type: "json_object" } // Forces JSON
+                temperature: 0,
+                response_format: { type: "json_object" } 
             })
         });
 
@@ -80,18 +95,12 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: `Mistral API Error: ${data.error.message}` });
         }
         
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            return res.status(500).json({ error: "Mistral failed to read the images." });
-        }
-
         const responseText = data.choices[0].message.content;
         
-        // Parse the JSON
         let parsedFeedback;
         try {
             parsedFeedback = JSON.parse(responseText);
         } catch (e) {
-            // Fallback if it fails to parse
             return res.status(500).json({ error: "Failed to parse AI response." });
         }
 
