@@ -17,7 +17,7 @@
         </div>
         <div class="flex items-center gap-4">
             <div class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-2">
-                <span id="timer-display" class="font-mono font-bold text-rose-400">30:00</span>
+                <span id="timer-display" class="font-mono font-bold text-rose-400">--:--</span>
             </div>
             <button onclick="confirmExit()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors">Exit</button>
         </div>
@@ -27,28 +27,30 @@
         
         <div id="question-paper" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
             <h2 id="question-text" class="text-xl md:text-2xl font-bold text-white mb-4 leading-relaxed"></h2>
-            <p class="text-sm text-slate-400 mb-2"><strong>Instructions:</strong> Write clearly on paper, include a diagram if needed, take a clear photo, and upload below.</p>
+            <p class="text-sm text-slate-400 mb-2"><strong>Instructions:</strong> Write clearly on paper, include a diagram if needed, take clear photos of all pages, and upload below.</p>
         </div>
 
         <div id="submission-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
+            <!-- ADDED 'multiple' TO ALLOW MULTIPLE IMAGES -->
             <div id="upload-area" class="border-2 border-dashed border-slate-700 rounded-xl p-8 text-center hover:border-blue-500 transition-colors bg-slate-950/50 cursor-pointer relative">
-                <input type="file" id="essay-image" accept="image/*" onchange="previewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                <p class="text-sm text-slate-300 font-medium">Tap to take a photo of your essay</p>
+                <input type="file" id="essay-image" accept="image/*" multiple onchange="previewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                <p class="text-sm text-slate-300 font-medium">Tap to take photos or select multiple pages</p>
             </div>
 
-            <div id="image-preview-container" class="hidden mt-4 relative rounded-xl overflow-hidden border border-slate-700">
-                <img id="image-preview" class="w-full h-auto max-h-[400px] object-contain bg-black" />
-                <button onclick="clearImage()" class="absolute top-2 right-2 bg-rose-600 hover:bg-rose-500 text-white p-2 rounded-lg text-xs font-bold shadow-lg">Remove</button>
+            <!-- PREVIEW CONTAINER FOR MULTIPLE IMAGES -->
+            <div id="image-preview-container" class="hidden mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Images injected here -->
             </div>
 
             <button id="submit-btn" onclick="submitEssay()" class="w-full mt-6 py-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                Submit for AI Grading
+                Submit
             </button>
         </div>
 
         <div id="loading-state" class="hidden bg-slate-900 border border-blue-900/50 rounded-2xl p-8 text-center">
             <div class="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
             <h3 class="font-bold text-lg text-white mb-1">Grading & Emailing Result...</h3>
+            <p class="text-sm text-slate-400">Processing your images. Do not close this page.</p>
         </div>
 
         <div id="result-box" class="hidden bg-slate-900 border border-emerald-800/50 rounded-2xl overflow-hidden shadow-2xl">
@@ -66,141 +68,217 @@
         // --- CONFIGURATION ---
         const urlParams = new URLSearchParams(window.location.search);
         const EXAM_ID = urlParams.get('exam') || 'carotid_triangle'; 
-        const WEB3FORMS_ACCESS_KEY = "a9cd9997-29c3-486f-9667-bb01dfdb0375"; // Your key!
+        const WEB3FORMS_ACCESS_KEY = "a9cd9997-29c3-486f-9667-bb01dfdb0375"; 
         
-        // --- DATABASE OF QUESTIONS ---
         const questionsDb = {
-            'carotid_triangle': {
-                title: "Head & Neck Essay Exam",
-                question: "Discuss the boundaries and contents of the Carotid Triangle.",
-                time: 30
-            },
-            'neuro_corticospinal': {
-                title: "Neuroanatomy Essay Exam",
-                question: "Discuss the pathways of the corticospinal tract.",
-                time: 45
-            }
+            'carotid_triangle': { title: "Head & Neck Essay Exam", question: "Discuss the boundaries and contents of the Carotid Triangle.", time: 30 },
+            'neuro_corticospinal': { title: "Neuroanatomy Essay Exam", question: "Discuss the pathways of the corticospinal tract.", time: 45 }
         };
 
-        let timeRemaining = 0;
+        let examData = questionsDb[EXAM_ID] || questionsDb['carotid_triangle'];
+        let selectedFiles = [];
         let timerInterval;
+        let hasSubmitted = false;
+        
+        // ABSOLUTE TIMER VARIABLES
+        let examEndTime = 0;
+        const TIMER_STORAGE_KEY = `tlt_essay_timer_${EXAM_ID}`;
 
         window.onload = () => {
-            const examData = questionsDb[EXAM_ID] || questionsDb['carotid_triangle'];
             document.getElementById('header-title').innerText = examData.title;
             document.getElementById('question-text').innerText = examData.question;
             
-            timeRemaining = examData.time * 60;
+            // --- BACKGROUND TIMER LOGIC ---
+            const savedEndTime = localStorage.getItem(TIMER_STORAGE_KEY);
+            if (savedEndTime) {
+                examEndTime = parseInt(savedEndTime);
+            } else {
+                // If no timer exists, start a new one
+                examEndTime = Date.now() + (examData.time * 60 * 1000);
+                localStorage.setItem(TIMER_STORAGE_KEY, examEndTime);
+            }
+
             startTimer();
         };
 
         function startTimer() {
             const display = document.getElementById('timer-display');
-            display.innerText = formatTime(timeRemaining);
             
             timerInterval = setInterval(() => {
-                timeRemaining--;
-                display.innerText = formatTime(timeRemaining);
-                if (timeRemaining <= 0) { 
-                    clearInterval(timerInterval); 
-                    alert("Time is up! The assessment has been locked."); 
-                    document.getElementById('submit-btn').disabled = true;
+                const now = Date.now();
+                const timeRemaining = Math.floor((examEndTime - now) / 1000);
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    display.innerText = "00:00";
+                    
+                    // AUTO SUBMIT WITH 0 MARKS IF TIME RUNS OUT
+                    if (!hasSubmitted) {
+                        alert("Time is up! Your exam has been automatically submitted.");
+                        autoSubmitZero();
+                    }
+                    return;
                 }
+
+                const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+                const s = (timeRemaining % 60).toString().padStart(2, '0');
+                display.innerText = `${m}:${s}`;
+
+                if (timeRemaining < 300) display.classList.add('animate-pulse', 'text-red-500');
             }, 1000);
         }
 
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
+        // --- MULTIPLE IMAGE HANDLING ---
         function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('image-preview').src = e.target.result;
-                document.getElementById('image-preview-container').classList.remove('hidden');
-                document.getElementById('upload-area').classList.add('hidden');
-                document.getElementById('submit-btn').disabled = false;
-            };
-            reader.readAsDataURL(file);
+            const files = Array.from(event.target.files);
+            const previewContainer = document.getElementById('image-preview-container');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (files.length === 0) return;
+
+            selectedFiles = files;
+            previewContainer.innerHTML = '';
+            previewContainer.classList.remove('hidden');
+            document.getElementById('upload-area').classList.add('hidden');
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = "relative rounded-xl overflow-hidden border border-slate-700 h-32 md:h-40";
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-full object-cover" />
+                        <div class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-2 py-1 rounded">Page ${index + 1}</div>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Add a clear button
+            const clearBtn = document.createElement('button');
+            clearBtn.className = "col-span-2 md:col-span-3 mt-2 py-2 bg-rose-900/50 hover:bg-rose-800 text-rose-200 text-xs font-bold rounded-lg transition-colors";
+            clearBtn.innerText = "Remove All Images";
+            clearBtn.onclick = clearImage;
+            previewContainer.appendChild(clearBtn);
+
+            submitBtn.disabled = false;
         }
 
         function clearImage() {
             document.getElementById('essay-image').value = '';
+            selectedFiles = [];
             document.getElementById('image-preview-container').classList.add('hidden');
             document.getElementById('upload-area').classList.remove('hidden');
             document.getElementById('submit-btn').disabled = true;
         }
 
         function confirmExit() {
-            if (confirm("Are you sure you want to exit?")) {
+            if (confirm("Are you sure you want to exit? The timer will continue running in the background.")) {
                 window.location.href = 'index.html';
             }
         }
 
+        // --- SUBMISSION LOGIC ---
         async function submitEssay() {
-            const file = document.getElementById('essay-image').files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+            if (selectedFiles.length === 0) return;
+            hasSubmitted = true;
             
-            reader.onload = async () => {
-                const base64String = reader.result.split(',')[1];
-                const session = JSON.parse(localStorage.getItem('tlt_session'));
-                const studentId = session ? session.id : "Unknown";
-                
-                document.getElementById('submission-box').classList.add('hidden');
-                document.getElementById('question-paper').classList.add('hidden');
-                document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('submission-box').classList.add('hidden');
+            document.getElementById('question-paper').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
 
-                try {
-                    // 1. Send to Vercel for AI Grading
-                    const response = await fetch('/api/grade-essay', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            examId: EXAM_ID,
-                            image: base64String,
-                            mimeType: file.type,
-                            studentId: studentId
-                        })
+            try {
+                // Convert all images to base64
+                const base64Images = await Promise.all(selectedFiles.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+                        reader.readAsDataURL(file);
                     });
+                }));
 
-                    if (!response.ok) throw new Error("Server error");
-                    const data = await response.json();
-                    
-                    // 2. Show Result on Screen
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('result-box').classList.remove('hidden');
-                    document.getElementById('ai-feedback-content').innerText = data.feedback;
+                // Send to backend
+                const response = await fetch('/api/grade-essay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        examId: EXAM_ID,
+                        images: base64Images, // Sending array of images
+                        mimeType: selectedFiles[0].type,
+                        studentId: getStudentId()
+                    })
+                });
 
-                    // 3. SEND EMAIL TO YOU VIA WEB3FORMS
-                    await fetch("https://api.web3forms.com/submit", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Accept: "application/json"
-                        },
-                        body: JSON.stringify({
-                            access_key: WEB3FORMS_ACCESS_KEY,
-                            subject: `Essay Graded: ${studentId} - ${data.score}/${data.total}`,
-                            Student_ID: studentId,
-                            Exam: EXAM_ID,
-                            Score: `${data.score}/${data.total}`,
-                            Feedback: data.feedback
-                        })
-                    });
+                const data = await response.json();
+                finishExam(data.score, data.total, data.feedback);
 
-                } catch (error) {
-                    console.error(error);
-                    alert("Failed to grade essay. Please try again.");
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('submission-box').classList.remove('hidden');
-                    document.getElementById('question-paper').classList.remove('hidden');
-                }
-            };
+            } catch (error) {
+                console.error(error);
+                alert("Failed to grade essay. Please try again.");
+                hasSubmitted = false;
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('submission-box').classList.remove('hidden');
+                document.getElementById('question-paper').classList.remove('hidden');
+            }
+        }
+
+        // --- AUTO SUBMIT 0 MARKS ---
+        async function autoSubmitZero() {
+            if (hasSubmitted) return;
+            hasSubmitted = true;
+            
+            document.getElementById('submission-box').classList.add('hidden');
+            document.getElementById('question-paper').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            try {
+                // Notify backend of 0 score without sending images
+                const response = await fetch('/api/grade-essay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        examId: EXAM_ID,
+                        autoZero: true, 
+                        studentId: getStudentId()
+                    })
+                });
+
+                const data = await response.json();
+                finishExam(0, data.total, "Time expired. No essay was submitted.");
+
+            } catch (error) {
+                // If server fails, still show 0 on screen
+                finishExam(0, 10, "Time expired. No essay was submitted.");
+            }
+        }
+
+        function getStudentId() {
+            const session = JSON.parse(localStorage.getItem('tlt_session'));
+            return session ? session.id : "Unknown";
+        }
+
+        async function finishExam(score, total, feedback) {
+            localStorage.removeItem(TIMER_STORAGE_KEY); // Clear the timer
+            
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('result-box').classList.remove('hidden');
+            document.getElementById('ai-feedback-content').innerText = feedback;
+
+            // SEND EMAIL VIA WEB3FORMS
+            const studentId = getStudentId();
+            await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify({
+                    access_key: WEB3FORMS_ACCESS_KEY,
+                    subject: `Essay Graded: ${studentId} - ${score}/${total}`,
+                    Student_ID: studentId,
+                    Exam: EXAM_ID,
+                    Score: `${score}/${total}`,
+                    Feedback: feedback
+                })
+            });
         }
     </script>
 </body>
