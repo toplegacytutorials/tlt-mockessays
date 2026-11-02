@@ -3,7 +3,6 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your new Auth Key
     const apiKey = "AQ.Ab8RN6IVRk2byBj44dzJoNoaMz-YEYXv5tq810dRQJ6uKXvtw";
 
     let totalMarks = 10; 
@@ -55,7 +54,6 @@ export default async function handler(req, res) {
 
     CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array.`;
 
-    // Using Gemini 2.0 Flash WITHOUT the ?key= URL parameter
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
 
     try {
@@ -67,8 +65,8 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // THE FIX: Using Bearer token for the new AQ. Auth keys
-                'Authorization': `Bearer ${apiKey}`
+                // THE FIX: Using the required header for AQ. keys
+                'x-goog-api-key': apiKey 
             },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }],
