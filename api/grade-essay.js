@@ -2,10 +2,10 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     const { examId, images, mimeType, autoZero } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY; 
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API Key is missing in Vercel settings.' });
+        return res.status(500).json({ error: 'Groq API Key is missing in Vercel settings.' });
     }
 
     let totalMarks = 10; 
@@ -38,33 +38,48 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    // --- THE FIX: Changed model to gemini-3.8-flash as suggested by Google ---
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+    const url = `https://api.groq.com/openai/v1/chat/completions`;
 
     try {
-        const imageParts = images.map(img => ({
-            inline_data: { mime_type: mimeType, data: img }
+        const imageMessages = images.map(img => ({
+            type: "image_url",
+            image_url: {
+                url: `data:${mimeType};base64,${img}`
+            }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }]
+                model: "meta-llama/llama-4-scout-17b-16e-instruct", 
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: systemPrompt },
+                            ...imageMessages
+                        ]
+                    }
+                ],
+                temperature: 0.1 
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
+            return res.status(500).json({ error: `Groq API Error: ${data.error.message}` });
         }
         
-        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            return res.status(500).json({ error: "Gemini failed to read the image." });
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            return res.status(500).json({ error: "Groq failed to read the image." });
         }
 
-        const responseText = data.candidates[0].content.parts[0].text;
+        const responseText = data.choices[0].message.content;
         
         const scoreMatch = responseText.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
         let score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
