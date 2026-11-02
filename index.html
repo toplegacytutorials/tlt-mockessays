@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOP LEGACY TUTORIALS | ESSAY PORTAL</title>
+    <title>TOP LEGACY TUTORIALS | PORTAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
@@ -75,54 +75,35 @@
                 </div>
             </div>
 
-            <!-- FOLDERS VIEW -->
-            <div id="main-view" class="space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 class="font-bold text-lg text-white">Home</h3>
-                    <div class="w-full sm:w-72">
-                        <input type="text" id="search-bar" oninput="filterFolders()" placeholder="Search all exams..." class="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-slate-600">
-                    </div>
+            <!-- FOLDER 1: GROSS ANATOMY OF THE HEAD AND NECK -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    <h3 class="font-bold text-lg text-white tracking-wide">Gross Anatomy of the Head and Neck</h3>
                 </div>
-
-                <div id="folder-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Folder 1 -->
-                    <div onclick="openFolder('headneck')" class="bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-950 text-blue-400 rounded-xl flex items-center justify-center border border-blue-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-base">Gross Anatomy of the Head and Neck</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">1 Assessment available</p>
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                    </div>
-
-                    <!-- Folder 2 -->
-                    <div onclick="openFolder('neuro')" class="bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 cursor-pointer transition-all flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-indigo-950 text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-900/50 group-hover:scale-105 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-base">Neuroanatomy</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">1 Assessment available</p>
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-rose-500/50 transition-colors">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-900/30 px-2 py-1 rounded border border-rose-800/30 mb-3 inline-block">Head & Neck</span>
+                        <h4 class="font-bold text-white mb-1">Triangles & Cranial Nerves</h4>
+                        <p class="text-xs text-slate-400 mb-4">40 Questions • Exam Blueprint</p>
+                        <a href="headneck_mock.html" class="block text-center text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
                     </div>
                 </div>
             </div>
 
-            <!-- FOLDER CONTENTS VIEW -->
-            <div id="folder-content-view" class="hidden space-y-6">
-                <button onclick="closeFolder()" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-blue-950/40 px-3 py-1.5 rounded-lg border border-blue-900/40 transition-colors">
-                    ← Back to Folders
-                </button>
-                <h3 id="folder-title" class="font-bold text-xl text-white"></h3>
-                <div id="folder-exams-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Injected dynamically -->
+            <!-- FOLDER 2: NEUROANATOMY -->
+            <div class="space-y-4 pt-4">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    <h3 class="font-bold text-lg text-white tracking-wide">Neuroanatomy</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded border border-indigo-800/30 mb-3 inline-block">Neuroanatomy</span>
+                        <h4 class="font-bold text-white mb-1">Brainstem & Tract Lesions</h4>
+                        <p class="text-xs text-slate-400 mb-4">50 Questions • Exam Blueprint</p>
+                        <a href="brainstem_mock.html" class="block text-center text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
+                    </div>
                 </div>
             </div>
 
@@ -189,56 +170,6 @@
         function logout() {
             localStorage.removeItem('tlt_active_session');
             window.location.reload();
-        }
-
-        function openFolder(category) {
-            document.getElementById('main-view').classList.add('hidden');
-            const content = document.getElementById('folder-content-view');
-            content.classList.remove('hidden');
-
-            const title = document.getElementById('folder-title');
-            const list = document.getElementById('folder-exams-list');
-
-            if (category === 'headneck') {
-                title.innerText = "Gross Anatomy of the Head and Neck";
-                list.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-blue-500/50 transition-colors">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-900/30 px-2 py-1 rounded border border-rose-800/30 mb-3 inline-block">Head & Neck</span>
-                        <h4 class="font-bold text-white mb-1">Triangles & Cranial Nerves</h4>
-                        <p class="text-xs text-slate-400 mb-4">40 Questions • Exam Blueprint</p>
-                        <a href="headneck_mock.html" class="block text-center text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
-                    </div>
-                `;
-            } else if (category === 'neuro') {
-                title.innerText = "Neuroanatomy";
-                list.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded border border-indigo-800/30 mb-3 inline-block">Neuroanatomy</span>
-                        <h4 class="font-bold text-white mb-1">Brainstem & Tract Lesions</h4>
-                        <p class="text-xs text-slate-400 mb-4">50 Questions • Exam Blueprint</p>
-                        <a href="brainstem_mock.html" class="block text-center text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
-                    </div>
-                `;
-            }
-        }
-
-        function closeFolder() {
-            document.getElementById('folder-content-view').classList.add('hidden');
-            document.getElementById('main-view').classList.remove('hidden');
-        }
-
-        function filterFolders() {
-            const query = document.getElementById('search-bar').value.toLowerCase();
-            const folders = document.getElementById('folder-grid').children;
-            
-            for (let folder of folders) {
-                const text = folder.innerText.toLowerCase();
-                if (text.includes(query)) {
-                    folder.style.display = "flex";
-                } else {
-                    folder.style.display = "none";
-                }
-            }
         }
 
         const GEMINI_API_KEY = "AQ.Ab8RN6KOshsmQ3KB0xikzC6B7LdwqTWIV0i85Krn8KxRP7wlsQ"; 
