@@ -236,7 +236,6 @@
             }
         }
 
-        // --- IMAGE COMPRESSION ENGINE (Makes it FAST) ---
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -246,7 +245,7 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1200; // Resizes large phone photos down
+                        const MAX_WIDTH = 1000; // Reduced slightly for even faster speed
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
@@ -254,9 +253,8 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         
-                        // Compress to JPEG at 60% quality
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                        resolve(dataUrl.split(',')[1]); // Return just the base64 data
+                        resolve(dataUrl.split(',')[1]);
                     };
                 };
             });
@@ -276,7 +274,6 @@
             document.getElementById('loading-state').classList.remove('hidden');
 
             try {
-                // Compress all images before sending
                 const base64Images = await Promise.all(selectedFiles.map(file => compressImage(file)));
 
                 const response = await fetch('/api/grade-essay', {
@@ -285,21 +282,28 @@
                     body: JSON.stringify({
                         examId: EXAM_ID,
                         images: base64Images,
-                        mimeType: 'image/jpeg', // Always jpeg after compression
+                        mimeType: 'image/jpeg',
                         studentId: studentID
                     })
                 });
 
                 const data = await response.json();
+                
+                // --- NEW ERROR CHECKING ---
+                if (!response.ok) {
+                    throw new Error(data.error || "Server rejected the images.");
+                }
+
                 finishExam(data.score, data.total, data.feedback);
 
             } catch (error) {
                 console.error(error);
-                alert("Failed to grade essay. Please try again.");
+                alert("GRADING FAILED: " + error.message); // NOW IT WILL SHOW THE EXACT PROBLEM
                 hasSubmitted = false;
                 document.getElementById('loading-state').classList.add('hidden');
                 document.getElementById('submission-box').classList.remove('hidden');
                 document.getElementById('question-paper').classList.remove('hidden');
+                document.getElementById('exam-content').classList.remove('hidden');
                 document.getElementById('header-timer').classList.remove('hidden');
                 document.getElementById('header-title').innerText = examData.title;
             }
@@ -331,6 +335,8 @@
                 });
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error);
+
                 finishExam(0, data.total, `Assessment Locked: ${reason}`);
 
             } catch (error) {
@@ -343,7 +349,7 @@
             
             document.getElementById('loading-state').classList.add('hidden');
             document.getElementById('result-box').classList.remove('hidden');
-            document.getElementById('ai-feedback-content').innerText = feedback;
+            document.getElementById('ai-feedback-content').innerText = feedback || "No feedback provided.";
 
             await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
