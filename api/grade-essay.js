@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your Mistral key is hardcoded here
+    // Your Mistral key
     const apiKey = "mstrl_jUVKTm7uzfHyGpiELlX2rlhxpcFC0ubB_4az0F1";
 
     let totalMarks = 10; 
@@ -11,10 +11,10 @@ export default async function handler(req, res) {
 
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
-        markingScheme = `Discuss boundaries/contents of the Carotid Triangle.`;
+        markingScheme = `Discuss boundaries/contents of the Carotid Triangle. Boundaries: Superior belly of omohyoid, posterior belly of digastric, anterior border of SCM. Contents: Common carotid artery, internal jugular vein, vagus nerve, ansa cervicalis, hypoglossal nerve.`;
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
-        markingScheme = `Discuss pathways of the corticospinal tract.`;
+        markingScheme = `Discuss pathways of the corticospinal tract. Origin: Motor cortex. Pathway: Internal capsule, crus cerebri, pons, medulla. Decussation: Pyramidal decussation. Lesions: UMN vs LMN signs.`;
     } else {
         return res.status(400).json({ error: 'Invalid Exam ID' });
     }
@@ -31,15 +31,18 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    const systemPrompt = `Grade this handwritten essay based on: ${markingScheme}.
-    Output EXACTLY this format and nothing else:
-    SCORE: [X]/${totalMarks}
-    FEEDBACK: [One short sentence summarizing what they missed.]`;
+    // DETAILED PROMPT FOR BREAKDOWN
+    const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
+    Read the text from the images and compare it strictly to this Marking Scheme:
+    ${markingScheme}
+    
+    Rules:
+    1. At the very top of your response, you MUST output exactly: "SCORE: [X]/${totalMarks}"
+    2. Then provide feedback using these EXACT headers: "WHAT YOU GOT RIGHT:", "WHAT YOU MISSED:", and "EXAMINER ADVICE:". Do not use markdown bolding (**) for the headers.`;
 
     const url = `https://api.mistral.ai/v1/chat/completions`;
 
     try {
-        // Mistral supports up to 8 images per request.
         const imageParts = images.slice(0, 8).map(img => ({
             type: "image_url",
             image_url: { url: `data:${mimeType};base64,${img}` }
@@ -52,7 +55,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "pixtral-12b-2409", // Mistral's fast, free vision model
+                model: "pixtral-12b-2409",
                 messages: [
                     {
                         role: "user",
