@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOP LEGACY TUTORIALS | ESSAY PORTAL</title>
+    <title>TOP LEGACY TUTORIALS | PORTAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -30,14 +30,14 @@
         </div>
     </div>
 
-    <!-- ESSAY GRADER DASHBOARD -->
+    <!-- DASHBOARD SECTION -->
     <div id="dashboard-section" class="hidden flex-grow flex flex-col">
         <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-md">
             <div>
                 <h1 class="font-bold text-xl tracking-tight text-white flex items-center gap-2">
                     TOP LEGACY TUTORIALS
                 </h1>
-                <p class="text-xs text-slate-400 mt-0.5">Automated Blueprint Grading Portal</p>
+                <p class="text-xs text-slate-400 mt-0.5">Authorized Mock Portal</p>
             </div>
             <div class="flex items-center gap-3">
                 <span id="display-id" class="text-sm font-bold bg-slate-950 px-3 py-1 rounded-full border border-slate-800 font-mono text-blue-400"></span>
@@ -45,17 +45,17 @@
             </div>
         </header>
 
-        <main class="max-w-3xl mx-auto w-full p-6 mt-6">
+        <main class="max-w-4xl mx-auto w-full p-6 space-y-8 mt-4">
+
+            <!-- AI ESSAY GRADER MODULE -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden relative">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
                 <div class="p-6 md:p-8">
-                    
                     <div class="mb-6">
-                        <h2 class="font-bold text-xl text-white mb-2">Upload Submission</h2>
-                        <p class="text-sm text-slate-400 leading-relaxed">Ensure your handwriting is legible, the page is well-lit, and the entire essay is visible in the picture. The AI will scan your text and grade it strictly against the current assignment's marking scheme.</p>
+                        <h2 class="font-bold text-xl text-white mb-2">AI Essay Grader Submission</h2>
+                        <p class="text-sm text-slate-400 leading-relaxed">Upload a clear photo of your handwritten assignment. The AI will evaluate your answers against the current marking scheme.</p>
                     </div>
 
-                    <!-- Upload Controls -->
                     <div class="flex flex-col sm:flex-row gap-4 items-center bg-slate-950 p-4 rounded-xl border border-slate-800/80">
                         <input type="file" id="essay-image" accept="image/*" class="block w-full text-sm text-slate-400 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all cursor-pointer">
                         <button id="grade-btn" onclick="processEssay()" class="w-full sm:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(5,150,105,0.4)] transition-all whitespace-nowrap active:scale-95">
@@ -63,13 +63,11 @@
                         </button>
                     </div>
 
-                    <!-- Loading Indicator -->
                     <div id="loading-state" class="hidden mt-6 text-sm text-blue-400 font-medium flex items-center justify-center gap-3 bg-blue-950/20 py-4 rounded-lg border border-blue-900/30">
                         <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         Scanning handwriting & verifying blueprint...
                     </div>
 
-                    <!-- Feedback Box -->
                     <div id="ai-feedback-box" class="hidden mt-6 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
                         <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
@@ -79,6 +77,39 @@
                     </div>
                 </div>
             </div>
+
+            <!-- FOLDER 1: GROSS ANATOMY OF THE HEAD AND NECK -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    <h3 class="font-bold text-lg text-white tracking-wide">Gross Anatomy of the Head and Neck</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-rose-500/50 transition-colors">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-900/30 px-2 py-1 rounded border border-rose-800/30 mb-3 inline-block">Head & Neck</span>
+                        <h4 class="font-bold text-white mb-1">Triangles & Cranial Nerves</h4>
+                        <p class="text-xs text-slate-400 mb-4">40 Questions • Exam Blueprint</p>
+                        <a href="headneck_mock.html" class="block text-center text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOLDER 2: NEUROANATOMY -->
+            <div class="space-y-4 pt-4">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    <h3 class="font-bold text-lg text-white tracking-wide">Neuroanatomy</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded border border-indigo-800/30 mb-3 inline-block">Neuroanatomy</span>
+                        <h4 class="font-bold text-white mb-1">Brainstem & Tract Lesions</h4>
+                        <p class="text-xs text-slate-400 mb-4">50 Questions • Exam Blueprint</p>
+                        <a href="brainstem_mock.html" class="block text-center text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg transition-colors">Start Assessment</a>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
