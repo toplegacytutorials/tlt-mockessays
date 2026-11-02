@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLT ESSAY PORTAL | 300L</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- LOGIN SECTION -->
+    <div id="login-section" class="flex-grow flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950">
+        <div class="w-full max-w-md bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-500/20 p-8">
+            <div class="w-16 h-16 bg-blue-900/50 text-blue-400 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-blue-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-center mb-2 text-white tracking-tight">ESSAY SUBMISSION</h1>
+            <p class="text-slate-400 text-center mb-6 text-sm">Enter your 300L authorization ID to access the grader.</p>
+            
+            <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
+                <input type="text" id="student-id" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT300xxxx">
+                <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Unauthorized ID format.</p>
+                
+                <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ESSAY GRADER DASHBOARD -->
+    <div id="dashboard-section" class="hidden flex-grow flex flex-col">
+        <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-md">
+            <div>
+                <h1 class="font-bold text-xl tracking-tight text-white flex items-center gap-2">
+                    TLT ESSAY EXAMINER
+                </h1>
+                <p class="text-xs text-slate-400 mt-0.5">Automated Blueprint Grading</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="display-id" class="text-sm font-bold bg-slate-950 px-3 py-1 rounded-full border border-slate-800 font-mono text-blue-400"></span>
+                <button onclick="logout()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">Exit</button>
+            </div>
+        </header>
+
+        <main class="max-w-3xl mx-auto w-full p-6 mt-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
+                <div class="p-6 md:p-8">
+                    
+                    <div class="mb-6">
+                        <h2 class="font-bold text-xl text-white mb-2">Upload Submission</h2>
+                        <p class="text-sm text-slate-400 leading-relaxed">Ensure your handwriting is legible, the page is well-lit, and the entire essay is visible in the picture. The AI will scan your text and grade it strictly against the current assignment's marking scheme.</p>
+                    </div>
+
+                    <!-- Upload Controls -->
+                    <div class="flex flex-col sm:flex-row gap-4 items-center bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+                        <input type="file" id="essay-image" accept="image/*" class="block w-full text-sm text-slate-400 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all cursor-pointer">
+                        <button id="grade-btn" onclick="processEssay()" class="w-full sm:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(5,150,105,0.4)] transition-all whitespace-nowrap active:scale-95">
+                            Submit for Grading
+                        </button>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loading-state" class="hidden mt-6 text-sm text-blue-400 font-medium flex items-center justify-center gap-3 bg-blue-950/20 py-4 rounded-lg border border-blue-900/30">
+                        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Scanning handwriting & verifying blueprint...
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="ai-feedback-box" class="hidden mt-6 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
+                        <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Official Result</h4>
+                        </div>
+                        <div id="ai-feedback-content" class="p-6 text-sm text-slate-300 space-y-4 whitespace-pre-line font-mono leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // LOGIN LOGIC
+        function checkId() {
+            const input = document.getElementById('student-id').value.trim().toUpperCase();
+            const btn = document.getElementById('login-btn');
+            const error = document.getElementById('error-msg');
+            const isValid = /^TLT300\d{4}$/.test(input); 
+
+            if (input && !isValid) error.classList.remove('opacity-0');
+            else error.classList.add('opacity-0');
+
+            if (isValid) {
+                btn.disabled = false;
+                btn.className = "w-full py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all";
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all";
+            }
+        }
+
+        function login() {
+            const id = document.getElementById('student-id').value.trim().toUpperCase();
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('dashboard-section').classList.add('flex');
+            document.getElementById('display-id').innerText = id;
+        }
+
+        function logout() {
+            window.location.reload();
+        }
+
+        // AI GRADING LOGIC
+        const GEMINI_API_KEY = "AQ.Ab8RN6KOshsmQ3KB0xikzC6B7LdwqTWIV0i85Krn8KxRP7wlsQ"; 
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]); 
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function processEssay() {
+            const fileInput = document.getElementById('essay-image');
+            const loadingState = document.getElementById('loading-state');
+            const feedbackBox = document.getElementById('ai-feedback-box');
+            const feedbackContent = document.getElementById('ai-feedback-content');
+            const gradeBtn = document.getElementById('grade-btn');
+
+            if (!fileInput.files.length) {
+                alert("Please upload a picture of your handwritten essay first.");
+                return;
+            }
+
+            gradeBtn.disabled = true;
+            gradeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            loadingState.classList.remove('hidden');
+            feedbackBox.classList.add('hidden');
+
+            try {
+                const base64Image = await fileToBase64(fileInput.files[0]);
+
+                // REPLACE THIS SCHEME WITH THE SPECIFIC ESSAY YOU ASSIGN
+                const markingScheme = `
+                Question: Discuss the boundaries and contents of the Carotid Triangle.
+                Total Marks: 10
+                Required Keywords:
+                - Superior Belly of Omohyoid (1 mark)
+                - Posterior Belly of Digastric (1 mark)
+                - Anterior border of Sternocleidomastoid (1 mark)
+                - Common Carotid Artery (1 mark)
+                - Internal Jugular Vein (1 mark)
+                - Vagus Nerve / CN X (1 mark)
+                - Ansa Cervicalis (1 mark)
+                - Hypoglossal Nerve / CN XII (1 mark)
+                - Diagram (2 marks). If no diagram is detected, state: "Diagram missing: -2 marks."
+                `;
+
+                const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
+                Read the image text and compare it strictly to this Marking Scheme:
+                ${markingScheme}
+                
+                Rules:
+                1. Only award marks for exact or synonymous anatomical matches to the scheme.
+                2. Do not give free marks for general knowledge.
+                3. Output exactly like this (use uppercase headers, do not use markdown bolding like **):
+                
+                SCORE: [X/10]
+                
+                WHAT YOU GOT RIGHT:
+                - [Point 1]
+                - [Point 2]
+                
+                WHAT YOU MISSED:
+                - [Point 1]
+                
+                EXAMINER ADVICE:
+                [One sentence of clinical or exam advice]`;
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: systemPrompt },
+                                { inline_data: { mime_type: "image/jpeg", data: base64Image } }
+                            ]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates.length > 0) {
+                    feedbackContent.innerText = data.candidates[0].content.parts[0].text;
+                    feedbackBox.classList.remove('hidden');
+                } else {
+                    throw new Error("AI could not process the image.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred. Make sure the image is clear and try again.");
+            } finally {
+                loadingState.classList.add('hidden');
+                gradeBtn.disabled = false;
+                gradeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                fileInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
