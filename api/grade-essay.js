@@ -2,12 +2,14 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     const { examId, images, mimeType, autoZero } = req.body;
-
     const apiKey = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-    let markingScheme = "";
+    if (!apiKey) {
+        return res.status(500).json({ error: 'API Key is missing in Vercel settings.' });
+    }
+
     let totalMarks = 10; 
+    let markingScheme = "";
 
     if (examId === 'carotid_triangle') {
         totalMarks = 10;
@@ -31,11 +33,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    // EXTREMELY FAST PROMPT
     const systemPrompt = `Grade this handwritten essay based on: ${markingScheme}.
     Output EXACTLY this format and nothing else:
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
         const imageParts = images.map(img => ({
@@ -51,6 +54,16 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
+
+        // --- SAFETY CHECK ---
+        if (data.error) {
+            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
+        }
+        
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            return res.status(500).json({ error: "Gemini failed to read the image." });
+        }
+
         const responseText = data.candidates[0].content.parts[0].text;
         
         const scoreMatch = responseText.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
@@ -60,6 +73,6 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Failed to grade essay' });
+        return res.status(500).json({ error: `Server Error: ${error.message}` });
     }
 }
