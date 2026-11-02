@@ -17,11 +17,11 @@ export default async function handler(req, res) {
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
         3. Diagram (2 marks): 
-           - A diagram of the triangle is present. 
-           - Look closely at the image. The student has explicitly labeled "Sternocleidomastoid", "Digastric", "Stylohyoid", and "Omohyoid" with lines pointing to the drawing.
-           - IF these labels are present in the diagram, you MUST award the full 2 marks. Do not penalize the drawing for being hand-drawn or sketched.
+           - A hand-drawn diagram is present in the student's work.
+           - RULE FOR DIAGRAM: If ANY drawing of the neck/triangle is present, and the student has listed the muscles (Digastric, Omohyoid, SCM, Stylohyoid) anywhere on the page, you MUST award the full 2/2 marks. 
+           - DO NOT attempt to trace the lines to see if they point perfectly to the drawing. Hand-drawn sketches are messy. Award the marks if the diagram exists.
         
-        RULES: Do not penalize for extra info (roof, floor, clinical correlations). If they have the core points, award full marks.`;
+        RULES: Do not penalize for extra info. If they have the core points, award full marks.`;
 
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
