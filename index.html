@@ -19,11 +19,11 @@
             </div>
             <h1 class="text-2xl font-bold text-center mb-2 text-white tracking-tight">TOP LEGACY TUTORIALS</h1>
             <p class="text-slate-400 text-center mb-6 text-sm">Enter your Authorized ID to Login</p>
-            
+
             <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
                 <input type="text" id="student-id" name="tlt_student_id" autocomplete="username" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT3001000">
                 <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Invalid ID</p>
-                
+
                 <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
             </form>
         </div>
@@ -132,6 +132,21 @@
     <script>
         const SESSION_DURATION = 60 * 60 * 1000;
 
+        // -------- SESSION HELPERS --------
+        function readSession() {
+            try {
+                const raw = localStorage.getItem('tlt_active_session');
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object' || !parsed.id || !parsed.time) return null;
+                if (Date.now() - parsed.time >= SESSION_DURATION) return null; // expired
+                return parsed;
+            } catch (e) {
+                return null; // corrupted JSON
+            }
+        }
+
+        // -------- ON LOAD (NO RELOAD!) --------
         window.onload = () => {
             const savedId = localStorage.getItem('tlt_remembered_id');
             if (savedId) {
@@ -139,19 +154,21 @@
                 checkId();
             }
 
-            const session = JSON.parse(localStorage.getItem('tlt_active_session'));
-            if (session && (Date.now() - session.time < SESSION_DURATION)) {
+            const session = readSession();
+            if (session) {
                 showDashboard(session.id);
             } else {
-                logout();
+                // Stale or missing session: quietly clear it. DO NOT reload.
+                localStorage.removeItem('tlt_active_session');
             }
         };
 
+        // -------- ID VALIDATION --------
         function checkId() {
             const input = document.getElementById('student-id').value.trim().toUpperCase();
             const btn = document.getElementById('login-btn');
             const error = document.getElementById('error-msg');
-            
+
             let isValid = false;
             const match = input.match(/^TLT300(\d{4})$/);
             if (match) {
@@ -173,6 +190,7 @@
             }
         }
 
+        // -------- AUTH --------
         function login() {
             const id = document.getElementById('student-id').value.trim().toUpperCase();
             localStorage.setItem('tlt_remembered_id', id);
@@ -188,10 +206,19 @@
 
         function logout() {
             localStorage.removeItem('tlt_active_session');
+            // Reload ONLY on explicit user logout
             window.location.reload();
         }
 
+        // -------- FOLDERS --------
         function openFolder(category) {
+            // Guard: session may have expired while browsing
+            if (!readSession()) {
+                alert("Your session has expired. Please log in again.");
+                logout();
+                return;
+            }
+
             document.getElementById('main-view').classList.add('hidden');
             const content = document.getElementById('folder-content-view');
             content.classList.remove('hidden');
@@ -230,29 +257,35 @@
         function filterFolders() {
             const query = document.getElementById('search-bar').value.toLowerCase();
             const folders = document.getElementById('folder-grid').children;
-            
+
             for (let folder of folders) {
                 const text = folder.innerText.toLowerCase();
-                if (text.includes(query)) {
-                    folder.style.display = "flex";
-                } else {
-                    folder.style.display = "none";
-                }
+                folder.style.display = text.includes(query) ? "flex" : "none";
             }
         }
 
-        const GEMINI_API_KEY = "AQ.Ab8RN6KOshsmQ3KB0xikzC6B7LdwqTWIV0i85Krn8KxRP7wlsQ"; 
+        // -------- AI GRADER (proxied) --------
+        // NOTE: The API key has been REMOVED from client-side code.
+        // The endpoint below should be your own backend route that holds the key server-side.
+        const GRADER_ENDPOINT = "/api/grade-essay";
 
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]); 
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = error => reject(error);
             });
         }
 
         async function processEssay() {
+            // Session guard before hitting the API
+            if (!readSession()) {
+                alert("Your session has expired. Please log in again.");
+                logout();
+                return;
+            }
+
             const fileInput = document.getElementById('essay-image');
             const loadingState = document.getElementById('loading-state');
             const feedbackBox = document.getElementById('ai-feedback-box');
@@ -287,46 +320,52 @@
                 - Diagram (2 marks). If no diagram is detected, state: "Diagram missing: -2 marks."
                 `;
 
-                const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
+                const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay.
                 Read the image text and compare it strictly to this Marking Scheme:
                 ${markingScheme}
-                
+
                 Rules:
                 1. Only award marks for exact or synonymous anatomical matches to the scheme.
                 2. Do not give free marks for general knowledge.
                 3. Output exactly like this (use uppercase headers, do not use markdown bolding like **):
-                
+
                 SCORE: [X/10]
-                
+
                 WHAT YOU GOT RIGHT:
                 - [Point 1]
                 - [Point 2]
-                
+
                 WHAT YOU MISSED:
                 - [Point 1]
-                
+
                 EXAMINER ADVICE:
                 [One sentence of clinical or exam advice]`;
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-                
-                const response = await fetch(url, {
+                // Calls your backend proxy, NOT Google directly.
+                // Your backend (Node/Python/etc.) should:
+                //   1. Validate the incoming session / auth token
+                //   2. Attach the Gemini API key (kept in an env variable)
+                //   3. Forward the request to generativelanguage.googleapis.com
+                //   4. Return the parsed text back to this client.
+                const response = await fetch(GRADER_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                { text: systemPrompt },
-                                { inline_data: { mime_type: "image/jpeg", data: base64Image } }
-                            ]
-                        }]
+                        prompt: systemPrompt,
+                        image: base64Image,
+                        mimeType: "image/jpeg"
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error("Grader service returned " + response.status);
+                }
+
                 const data = await response.json();
-                
-                if (data.candidates && data.candidates.length > 0) {
-                    feedbackContent.innerText = data.candidates[0].content.parts[0].text;
+                const feedbackText = data.feedback || (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text);
+
+                if (feedbackText) {
+                    feedbackContent.innerText = feedbackText;
                     feedbackBox.classList.remove('hidden');
                 } else {
                     throw new Error("AI could not process the image.");
