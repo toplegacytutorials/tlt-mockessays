@@ -12,6 +12,7 @@
         @keyframes loading-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
         .animate-spin-reverse { animation: spin-reverse 2s linear infinite; }
         .animate-loading-bar { animation: loading-bar 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .fade-text { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
@@ -26,8 +27,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
         </div>
-        <h2 class="text-2xl font-extrabold text-white mb-2 tracking-tight">AI Examiner is analyzing...</h2>
-        <p class="text-slate-400 text-sm font-medium mb-8">Extracting handwritten text & verifying marking scheme.</p>
+        
+        <h2 class="text-xl md:text-2xl font-extrabold text-white mb-3 tracking-widest uppercase text-center">GRADING YOUR ASSESSMENT BELOW</h2>
+        
+        <!-- Animated Text Sequence -->
+        <div class="h-6 flex items-center justify-center mb-8">
+            <p id="loading-subtext" class="text-blue-400 text-sm font-semibold transition-opacity duration-300">Scanning for overview...</p>
+        </div>
+
         <div class="w-64 h-1.5 bg-slate-800 rounded-full overflow-hidden">
             <div class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 w-1/2 animate-loading-bar rounded-full"></div>
         </div>
@@ -42,7 +49,6 @@
             <div id="timer-badge" class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-2">
                 <span id="timer-display" class="font-mono font-bold text-rose-400">--:--</span>
             </div>
-            <!-- Exit button changed to just leave -->
             <button id="exit-btn" onclick="exitToDashboard()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors">Exit</button>
         </div>
     </header>
@@ -104,35 +110,48 @@
 
         <!-- RESULTS SCREEN -->
         <div id="result-box" class="hidden space-y-6">
+            
+            <!-- 1. Sleek Header matching the MC exam -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
-                <div class="relative w-44 h-44 mx-auto mb-4">
+                <span class="inline-block text-[11px] font-bold tracking-widest uppercase bg-blue-900/40 text-blue-400 border border-blue-800/50 px-3 py-1 rounded mb-3">ANATOMY</span>
+                <h1 id="result-exam-title" class="text-xl md:text-2xl font-extrabold tracking-tight text-white mb-2">Essay Exam</h1>
+                
+                <div class="flex justify-center items-center flex-wrap gap-2 md:gap-3 font-mono text-[11px] text-slate-400 pt-3 border-t border-slate-800/80 mt-3">
+                    <span id="result-student-id" class="text-blue-400 font-bold">TLT...</span> 
+                    <span class="text-slate-600">•</span> 
+                    <span id="result-student-dept" class="text-slate-300 font-sans">Dept</span> 
+                    <span class="text-slate-600">•</span> 
+                    <span id="result-date-time">Date</span>
+                </div>
+            </div>
+
+            <!-- 2. Score Circle -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl text-center relative overflow-hidden">
+                <div class="relative w-40 h-40 mx-auto mb-4">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="45" stroke="#1e293b" stroke-width="8" fill="transparent" />
                         <circle id="progress-ring" cx="50" cy="50" r="45" stroke="#3b82f6" stroke-width="8" fill="transparent" stroke-dasharray="283" stroke-dashoffset="283" class="transition-all duration-1000 ease-out" />
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center flex-col">
-                        <span id="result-percent" class="text-4xl font-black text-white">0%</span>
+                        <span id="result-percent" class="text-3xl font-black text-white">0%</span>
                     </div>
                 </div>
-                <h2 id="result-score-text" class="text-2xl font-black text-white mb-1">0 / 10 Marks</h2>
+                <h2 id="result-score-text" class="text-xl font-black text-white mb-1">0 / 10 Marks</h2>
                 <p id="result-grade-text" class="text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold">Requires Revision</p>
                 
-                <!-- Clear state when clicked -->
                 <button onclick="returnToDashboard()" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg active:scale-95">Return to Dashboard</button>
             </div>
 
-            <!-- Subheading-by-Subheading Analysis -->
+            <!-- 3. Subheading Breakdown -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
-                <h3 class="font-bold text-xl text-white mb-2 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <h3 class="font-bold text-lg text-white mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Examiner Analysis
                 </h3>
                 
-                <!-- Container for subheadings -->
-                <div id="feedback-breakdown" class="space-y-4"></div>
+                <div id="feedback-breakdown" class="space-y-3"></div>
 
-                <!-- Overall Missed / Advice -->
                 <div class="space-y-4 mt-6">
                     <div class="bg-rose-950/20 border border-rose-900/50 rounded-xl p-4">
                         <h4 class="text-sm font-bold text-rose-400 uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -171,9 +190,37 @@
         let studentID = "";
         let studentDept = "";
         const TIMER_STORAGE_KEY = `tlt_essay_timer_${EXAM_ID}`;
-        
-        // Dynamic key to save the final result
         let RESULT_STORAGE_KEY = "";
+
+        // Loading Text Animation Logic
+        const loadingTexts = [
+            "Scanning for overview...",
+            "Validating accuracy of terminologies...",
+            "Allocating marks...",
+            "Verifying Results..."
+        ];
+        let loadingIndex = 0;
+        let loadingTextInterval;
+
+        function startLoadingText() {
+            loadingIndex = 0;
+            const el = document.getElementById('loading-subtext');
+            el.innerText = loadingTexts[0];
+            el.style.opacity = '1';
+            
+            loadingTextInterval = setInterval(() => {
+                loadingIndex = (loadingIndex + 1) % loadingTexts.length;
+                el.style.opacity = '0'; // Fade out
+                setTimeout(() => {
+                    el.innerText = loadingTexts[loadingIndex];
+                    el.style.opacity = '1'; // Fade in
+                }, 300);
+            }, 2500); // Change every 2.5 seconds
+        }
+
+        function stopLoadingText() {
+            clearInterval(loadingTextInterval);
+        }
 
         window.onload = () => {
             document.getElementById('header-title').innerText = examData.title;
@@ -188,19 +235,18 @@
                 document.getElementById('login-id').value = studentID;
                 RESULT_STORAGE_KEY = `tlt_exam_result_${EXAM_ID}_${studentID}`;
 
-                // CHECK IF A RESULT IS ALREADY SAVED (Page Refresh)
+                // CHECK IF RESULT EXISTS (Survives refresh)
                 const savedResultRaw = localStorage.getItem(RESULT_STORAGE_KEY);
                 if (savedResultRaw) {
                     const data = JSON.parse(savedResultRaw);
                     
-                    // Hide login/exam, show results immediately
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('exam-content').classList.add('hidden');
                     document.getElementById('header-timer').classList.add('hidden');
                     document.getElementById('header-title').innerText = "Official Result";
                     
-                    displayResult(data.score, data.total, data.feedbackData, data.dept);
-                    return; // Stop execution so timer doesn't start
+                    displayResult(data);
+                    return; 
                 }
             } else {
                 alert("No active session found. Redirecting to login.");
@@ -301,7 +347,6 @@
             document.getElementById('submit-btn').disabled = true;
         }
 
-        // EXIT PEACEFULLY (Just go back to dashboard, timer keeps running)
         function exitToDashboard() {
             window.location.href = 'index.html';
         }
@@ -341,7 +386,9 @@
             document.getElementById('submission-box').classList.add('hidden');
             document.getElementById('question-paper').classList.add('hidden');
             document.getElementById('exam-content').classList.add('hidden');
+            
             document.getElementById('loading-state').classList.remove('hidden');
+            startLoadingText();
 
             try {
                 const base64Images = await Promise.all(selectedFiles.map(file => compressImage(file)));
@@ -369,6 +416,7 @@
                 console.error(error);
                 alert("GRADING FAILED: " + error.message);
                 hasSubmitted = false;
+                stopLoadingText();
                 document.getElementById('loading-state').classList.add('hidden');
                 document.getElementById('submission-box').classList.remove('hidden');
                 document.getElementById('question-paper').classList.remove('hidden');
@@ -390,7 +438,9 @@
             document.getElementById('submission-box').classList.add('hidden');
             document.getElementById('question-paper').classList.add('hidden');
             document.getElementById('exam-content').classList.add('hidden');
+            
             document.getElementById('loading-state').classList.remove('hidden');
+            startLoadingText();
 
             try {
                 const response = await fetch('/api/grade-essay', {
@@ -416,30 +466,37 @@
 
         async function finishExam(score, total, feedbackData) {
             localStorage.removeItem(TIMER_STORAGE_KEY);
+            stopLoadingText();
             
-            // SAVE THE RESULT SO IT SURVIVES REFRESH
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
             const resultData = {
                 score: score,
                 total: total,
                 feedbackData: feedbackData,
-                dept: studentDept
+                dept: studentDept,
+                id: studentID,
+                title: examData.title,
+                dateStr: dateStr,
+                timeStr: timeStr
             };
             localStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify(resultData));
 
             document.getElementById('loading-state').classList.add('hidden');
             document.getElementById('header-title').innerText = "Official Result";
 
-            // Save to Dashboard History
+            // Dashboard History
             const percentage = Math.round((score / total) * 100);
-            const now = new Date();
             const newRecord = {
                 examTitle: examData.title,
                 subject: 'Anatomy',
                 score: score,
                 total: total,
                 percent: percentage,
-                date: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-                time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                date: dateStr,
+                time: timeStr
             };
             try {
                 const storageKey = 'tlt_score_history_' + studentID;
@@ -448,24 +505,26 @@
                 localStorage.setItem(storageKey, JSON.stringify(existingHistory));
             } catch(e) {}
 
-            // Render the UI
-            displayResult(score, total, feedbackData, studentDept);
+            displayResult(resultData);
 
-            // Send Email
             if (feedbackData && feedbackData.missed) {
                 await sendEmail(score, total, `Score: ${score}/${total}. Missed: ${feedbackData.missed.join(', ')}`);
-            } else {
-                await sendEmail(score, total, "No specific feedback.");
             }
         }
 
-        // --- SEPARATE FUNCTION TO RENDER RESULTS (Used by both finishExam and window.onload) ---
-        function displayResult(score, total, feedbackData, dept) {
+        function displayResult(data) {
             document.getElementById('result-box').classList.remove('hidden');
-            const percentage = Math.round((score / total) * 100);
+            
+            // Populate new header info
+            document.getElementById('result-exam-title').innerText = data.title;
+            document.getElementById('result-student-id').innerText = data.id;
+            document.getElementById('result-student-dept').innerText = data.dept;
+            document.getElementById('result-date-time').innerText = `${data.dateStr} ${data.timeStr}`;
+
+            const percentage = Math.round((data.score / data.total) * 100);
             
             document.getElementById('result-percent').innerText = `${percentage}%`;
-            document.getElementById('result-score-text').innerText = `${score} / ${total} Marks`;
+            document.getElementById('result-score-text').innerText = `${data.score} / ${data.total} Marks`;
 
             let strokeColor = "#ef4444"; 
             let gradeText = "Requires Revision";
@@ -487,14 +546,13 @@
             
             setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
 
-            // Populate Breakdown
             const breakdownContainer = document.getElementById('feedback-breakdown');
             const missedList = document.getElementById('feedback-missed');
             const adviceText = document.getElementById('feedback-advice');
             breakdownContainer.innerHTML = '';
 
-            if (feedbackData && feedbackData.breakdown) {
-                feedbackData.breakdown.forEach(section => {
+            if (data.feedbackData && data.feedbackData.breakdown) {
+                data.feedbackData.breakdown.forEach(section => {
                     breakdownContainer.innerHTML += `
                         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
                             <div class="flex justify-between items-center mb-2">
@@ -506,8 +564,8 @@
                     `;
                 });
 
-                missedList.innerHTML = feedbackData.missed.map(item => `<li>${item}</li>`).join('');
-                adviceText.innerText = feedbackData.advice;
+                missedList.innerHTML = data.feedbackData.missed.map(item => `<li>${item}</li>`).join('');
+                adviceText.innerText = data.feedbackData.advice;
             } else {
                 breakdownContainer.innerHTML = `<p class="text-sm text-slate-400">Detailed breakdown unavailable.</p>`;
                 missedList.innerHTML = `<li>No specific missing items recorded.</li>`;
@@ -515,7 +573,6 @@
             }
         }
 
-        // Clears the saved result so they can take the exam again next time
         function returnToDashboard() {
             localStorage.removeItem(RESULT_STORAGE_KEY);
             window.location.href = 'index.html';
