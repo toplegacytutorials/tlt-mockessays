@@ -31,14 +31,18 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
-    // DETAILED PROMPT FOR BREAKDOWN
+    // Structured prompt for JSON output
     const systemPrompt = `You are a strict Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it strictly to this Marking Scheme:
     ${markingScheme}
     
-    Rules:
-    1. At the very top of your response, you MUST output exactly: "SCORE: [X]/${totalMarks}"
-    2. Then provide feedback using these EXACT headers: "WHAT YOU GOT RIGHT:", "WHAT YOU MISSED:", and "EXAMINER ADVICE:". Do not use markdown bolding (**) for the headers.`;
+    You must reply with ONLY a valid JSON object, without any markdown formatting or backticks. The JSON must have exactly this structure:
+    {
+        "score": [integer score out of ${totalMarks}],
+        "correct": ["List of things the student got right"],
+        "missed": ["List of things the student missed"],
+        "advice": "One short sentence of exam advice"
+    }`;
 
     const url = `https://api.mistral.ai/v1/chat/completions`;
 
@@ -65,7 +69,8 @@ export default async function handler(req, res) {
                         ]
                     }
                 ],
-                temperature: 0.1 
+                temperature: 0, // <--- FIXED: Makes scoring deterministic
+                response_format: { type: "json_object" } // Forces JSON
             })
         });
 
@@ -81,10 +86,20 @@ export default async function handler(req, res) {
 
         const responseText = data.choices[0].message.content;
         
-        const scoreMatch = responseText.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
-        let score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
+        // Parse the JSON
+        let parsedFeedback;
+        try {
+            parsedFeedback = JSON.parse(responseText);
+        } catch (e) {
+            // Fallback if it fails to parse
+            return res.status(500).json({ error: "Failed to parse AI response." });
+        }
 
-        return res.status(200).json({ feedback: responseText, score, total: totalMarks });
+        return res.status(200).json({ 
+            feedback: parsedFeedback, 
+            score: parsedFeedback.score, 
+            total: totalMarks 
+        });
 
     } catch (error) {
         console.error(error);
