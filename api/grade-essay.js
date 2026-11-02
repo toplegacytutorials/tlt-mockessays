@@ -3,8 +3,12 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // Your OpenRouter Key
-    const apiKey = "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";
+    // This pulls the key securely from Vercel Environment Variables
+    const apiKey = process.env.OPENROUTER_API_KEY;
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'OpenRouter API Key is missing in Vercel settings.' });
+    }
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -73,12 +77,12 @@ export default async function handler(req, res) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
-                'HTTP-Referer': 'https://tlt-mockessays.vercel.app', // Required by OpenRouter
-                'X-Title': 'TLT Mock Essays' // Required by OpenRouter
+                'HTTP-Referer': 'https://tlt-mockessays.vercel.app',
+                'X-Title': 'TLT Mock Essays'
             },
             body: JSON.stringify({
-                // Using the massive NVIDIA Nemotron model for high accuracy OCR
-                model: "nvidia/nemotron-3.5-super-vl:free",
+                // Using Qwen 2 VL - an incredibly accurate free OCR model on OpenRouter
+                model: "qwen/qwen-2-vl-7b-instruct:free",
                 messages: [
                     {
                         role: "user",
