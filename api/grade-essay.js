@@ -81,8 +81,8 @@ export default async function handler(req, res) {
                 'X-Title': 'TLT Mock Essays'
             },
             body: JSON.stringify({
-                // UPDATED MODEL ID
-                model: "qwen/qwen2.5-vl-72b-instruct:free",
+                // UPDATED TO A CURRENT FREE VISION MODEL
+                model: "nvidia/nemotron-3.5-super-vl:free",
                 messages: [
                     {
                         role: "user",
