@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // This pulls your saved OpenRouter key from Vercel
+    // Read the key from Vercel
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
     if (autoZero) {
         return res.status(200).json({
-            feedback: { score: 0, breakdown: [{section: "Exam", score: "0/10", feedback: "Time expired or exam left."}], missed: ["Entire exam"], advice: "Complete the exam next time." },
+            feedback: { score: 0, breakdown: [{section: "Exam", score: "0/10", rationale: "Time expired or exam left."}], overallRationale: "Exam not completed.", advice: "Complete the exam next time." },
             score: 0,
             total: totalMarks
         });
@@ -54,11 +54,11 @@ export default async function handler(req, res) {
     {
         "score": [integer total score out of ${totalMarks}],
         "breakdown": [
-            { "section": "Boundaries", "score": "[X]/3", "feedback": "Briefly say what they got right or wrong here." },
-            { "section": "Contents", "score": "[X]/5", "feedback": "Briefly say what they got right or wrong here." },
-            { "section": "Diagram", "score": "[X]/2", "feedback": "Briefly say if the diagram is present and labeled." }
+            { "section": "Boundaries", "score": "[X]/3", "rationale": "Write a detailed, paragraph-length explanation of what the student wrote for boundaries, what was correct, and what was missing." },
+            { "section": "Contents", "score": "[X]/5", "rationale": "Write a detailed, paragraph-length explanation of what the student wrote for contents, what was correct, and what was missing." },
+            { "section": "Diagram", "score": "[X]/2", "rationale": "Write a detailed explanation of the diagram quality and labeling." }
         ],
-        "missed": ["List any specific missing keywords, or write 'Nothing missed'"],
+        "overallRationale": "Write a comprehensive 2-3 sentence summary of the student's overall performance, strengths, and weaknesses.",
         "advice": "One short sentence of exam advice"
     }
 
@@ -81,7 +81,6 @@ export default async function handler(req, res) {
                 'X-Title': 'TLT Mock Essays'
             },
             body: JSON.stringify({
-                // UPDATED TO A CURRENT FREE VISION MODEL
                 model: "nvidia/nemotron-3.5-super-vl:free",
                 messages: [
                     {
