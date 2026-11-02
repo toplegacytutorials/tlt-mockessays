@@ -19,9 +19,9 @@ export default async function handler(req, res) {
         3. Diagram (2 marks): 
            - A hand-drawn diagram is present in the student's work.
            - RULE FOR DIAGRAM: If ANY drawing of the neck/triangle is present, and the student has listed the muscles (Digastric, Omohyoid, SCM, Stylohyoid) anywhere on the page, you MUST award the full 2/2 marks. 
-           - DO NOT attempt to trace the lines to see if they point perfectly to the drawing. Hand-drawn sketches are messy. Award the marks if the diagram exists.
+           - DO NOT attempt to trace the lines. Hand-drawn sketches are messy. Award the marks if the diagram exists.
         
-        RULES: Do not penalize for extra info. If they have the core points, award full marks.`;
+        RULES: Do not penalize for extra info.`;
 
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
@@ -42,6 +42,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing images' });
     }
 
+    // NEW PROMPT: Strict addition rule
     const systemPrompt = `You are an Anatomy Examiner grading a handwritten essay. 
     Read the text from the images and compare it to this Marking Scheme:
     ${markingScheme}
@@ -56,7 +57,9 @@ export default async function handler(req, res) {
         ],
         "missed": ["List any specific missing keywords, or write 'Nothing missed'"],
         "advice": "One short sentence of exam advice"
-    }`;
+    }
+
+    CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array. If the student gets 3/3, 5/5, and 2/2, the total "score" must be 10.`;
 
     const url = `https://api.mistral.ai/v1/chat/completions`;
 
