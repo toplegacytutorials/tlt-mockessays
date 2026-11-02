@@ -25,6 +25,7 @@
 
     <main class="max-w-4xl mx-auto w-full p-6 space-y-6 mt-4 flex-grow">
         
+        <!-- LOGIN / DETAILS SCREEN -->
         <div id="login-screen" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-12 shadow-xl text-center mt-10 max-w-lg mx-auto">
             <div class="w-16 h-16 bg-blue-900/50 text-blue-400 rounded-2xl flex items-center justify-center mb-6 mx-auto border border-blue-800/50">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
@@ -46,6 +47,7 @@
             </form>
         </div>
 
+        <!-- EXAM CONTENT -->
         <div id="exam-content" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shadow-sm">
                 <div>
@@ -84,13 +86,34 @@
             <p class="text-sm text-slate-400">Compressing images and grading. This takes 3-5 seconds.</p>
         </div>
 
-        <div id="result-box" class="hidden bg-slate-900 border border-emerald-800/50 rounded-2xl overflow-hidden shadow-2xl">
-            <div class="bg-emerald-900/20 px-6 py-4 border-b border-emerald-800/50">
-                <h3 class="font-bold text-white text-lg">Official Result</h3>
+        <!-- NEW COLORFUL RESULT UI -->
+        <div id="result-box" class="hidden space-y-6">
+            
+            <!-- Scorecard Header -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl text-center">
+                <div class="relative w-40 h-40 mx-auto mb-4">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" stroke="#1e293b" stroke-width="8" fill="transparent" />
+                        <circle id="progress-ring" cx="50" cy="50" r="45" stroke="#3b82f6" stroke-width="8" fill="transparent" stroke-dasharray="283" stroke-dashoffset="283" class="transition-all duration-1000 ease-out" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center flex-col">
+                        <span id="result-percent" class="text-4xl font-black text-white">0%</span>
+                    </div>
+                </div>
+                
+                <h2 id="result-score-text" class="text-2xl font-black text-white mb-1">0 / 10 Correct</h2>
+                <p id="result-grade-text" class="text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold">Requires Revision</p>
+                
+                <button onclick="window.location.href='index.html'" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg active:scale-95">Return to Dashboard</button>
             </div>
-            <div id="ai-feedback-content" class="p-6 text-sm text-slate-300 whitespace-pre-line font-mono leading-relaxed bg-slate-950"></div>
-            <div class="px-6 py-4 text-center">
-                <button onclick="window.location.href='index.html'" class="px-6 py-2 bg-slate-800 text-white font-semibold rounded-lg">Return to Dashboard</button>
+
+            <!-- AI Feedback Analysis -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
+                <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Examiner Analysis
+                </h3>
+                <div id="ai-feedback-content" class="text-sm md:text-base text-slate-300 whitespace-pre-line font-mono leading-relaxed bg-slate-950 p-6 rounded-xl border border-slate-800/80"></div>
             </div>
         </div>
     </main>
@@ -130,11 +153,8 @@
                 window.location.href = 'index.html';
             }
 
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden && !hasSubmitted && examEndTime > 0) {
-                    autoSubmitZero("You left the exam page. Assessment locked.");
-                }
-            });
+            // NOTE: The visibilitychange listener is REMOVED. 
+            // Leaving the tab will no longer auto-submit. Only clicking "Exit" or running out of time will lock it.
         };
 
         function validateInput() {
@@ -245,7 +265,7 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1000; // Reduced slightly for even faster speed
+                        const MAX_WIDTH = 1000; 
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
@@ -289,7 +309,6 @@
 
                 const data = await response.json();
                 
-                // --- NEW ERROR CHECKING ---
                 if (!response.ok) {
                     throw new Error(data.error || "Server rejected the images.");
                 }
@@ -298,7 +317,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("GRADING FAILED: " + error.message); // NOW IT WILL SHOW THE EXACT PROBLEM
+                alert("GRADING FAILED: " + error.message);
                 hasSubmitted = false;
                 document.getElementById('loading-state').classList.add('hidden');
                 document.getElementById('submission-box').classList.remove('hidden');
@@ -349,8 +368,42 @@
             
             document.getElementById('loading-state').classList.add('hidden');
             document.getElementById('result-box').classList.remove('hidden');
+            document.getElementById('header-title').innerText = "Official Result";
+
+            // --- UPDATE UI ---
+            const percentage = Math.round((score / total) * 100);
+            
+            // Set Text
+            document.getElementById('result-percent').innerText = `${percentage}%`;
+            document.getElementById('result-score-text').innerText = `${score} / ${total} Marks`;
             document.getElementById('ai-feedback-content').innerText = feedback || "No feedback provided.";
 
+            // Set Color & Grade Text based on score
+            let strokeColor = "#ef4444"; // Red
+            let gradeText = "Requires Revision";
+            
+            if (percentage >= 70) {
+                strokeColor = "#22c55e"; // Green
+                gradeText = "Distinction Standard";
+            } else if (percentage >= 50) {
+                strokeColor = "#f59e0b"; // Yellow/Orange
+                gradeText = "Pass Standard";
+            }
+
+            document.getElementById('result-grade-text').innerText = gradeText;
+
+            // Animate Circular Ring
+            const ring = document.getElementById('progress-ring');
+            const circumference = 2 * Math.PI * 45; // r=45
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            ring.style.stroke = strokeColor;
+            // Small timeout to allow the element to render before animating
+            setTimeout(() => {
+                ring.style.strokeDashoffset = offset;
+            }, 100);
+
+            // Send Email
             await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
