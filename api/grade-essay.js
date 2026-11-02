@@ -3,7 +3,8 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    const apiKey = "AQ.Ab8RN6IVRk2byBj44dzJoNoaMz-YEYXv5tq810dRQJ6uKXvtw";
+    // Your OpenRouter Key
+    const apiKey = "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";
 
     let totalMarks = 10; 
     let markingScheme = "";
@@ -12,11 +13,16 @@ export default async function handler(req, res) {
         totalMarks = 10;
         markingScheme = `
         Question: Discuss the boundaries and contents of the Carotid Triangle.
+        
         Marking Scheme (Total 10 marks):
         1. Boundaries (3 marks): Superior (Posterior belly of Digastric/Stylohyoid), Posterior (Anterior border of SCM), Inferior (Superior belly of Omohyoid).
         2. Contents (5 marks): Arterial (CCA/ICA/ECA), Venous (IJV), Nerves (Vagus, Hypoglossal, Spinal Accessory, Ansa Cervicalis, Sympathetic Trunk), Lymphatics.
-        3. Diagram (2 marks): Hand-drawn diagram present with labels.
-        `;
+        3. Diagram (2 marks): 
+           - A hand-drawn diagram is present in the student's work.
+           - RULE FOR DIAGRAM: If ANY drawing of the neck/triangle is present, and the student has listed the muscles (Digastric, Omohyoid, SCM, Stylohyoid) anywhere on the page, you MUST award the full 2/2 marks. 
+        
+        RULES: Do not penalize for extra info.`;
+
     } else if (examId === 'neuro_corticospinal') {
         totalMarks = 15;
         markingScheme = `Discuss pathways of the corticospinal tract. Origin (3 marks), Pathway (6 marks), Decussation (2 marks), Lesions (4 marks).`;
@@ -54,40 +60,50 @@ export default async function handler(req, res) {
 
     CRITICAL MATH RULE: The "score" at the top MUST be the exact mathematical sum of the scores in the "breakdown" array.`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+    const url = `https://openrouter.ai/api/v1/chat/completions`;
 
     try {
         const imageParts = images.slice(0, 8).map(img => ({
-            inline_data: { mime_type: mimeType, data: img }
+            type: "image_url",
+            image_url: { url: `data:${mimeType};base64,${img}` }
         }));
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // THE FIX: Using the required header for AQ. keys
-                'x-goog-api-key': apiKey 
+                'Authorization': `Bearer ${apiKey}`,
+                'HTTP-Referer': 'https://tlt-mockessays.vercel.app', // Required by OpenRouter
+                'X-Title': 'TLT Mock Essays' // Required by OpenRouter
             },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }],
-                generationConfig: {
-                    temperature: 0, 
-                    responseMimeType: "application/json" 
-                }
+                // Using the massive NVIDIA Nemotron model for high accuracy OCR
+                model: "nvidia/nemotron-3.5-super-vl:free",
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: systemPrompt },
+                            ...imageParts
+                        ]
+                    }
+                ],
+                temperature: 0,
+                response_format: { type: "json_object" } 
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(500).json({ error: `Google API Error: ${data.error.message}` });
+            return res.status(500).json({ error: `OpenRouter API Error: ${data.error.message || data.error}` });
         }
         
-        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            return res.status(500).json({ error: "Gemini failed to read the images." });
+        if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
+            return res.status(500).json({ error: "No valid response from OpenRouter. Please try again." });
         }
 
-        const responseText = data.candidates[0].content.parts[0].text;
+        const responseText = data.choices[0].message.content;
         
         let parsedFeedback;
         try {
