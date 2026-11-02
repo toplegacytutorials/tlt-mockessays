@@ -38,8 +38,8 @@ export default async function handler(req, res) {
     SCORE: [X]/${totalMarks}
     FEEDBACK: [One short sentence summarizing what they missed.]`;
 
-    // --- THIS IS THE FIX: Updated model name from gemini-1.5-flash to gemini-2.0-flash ---
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    // --- THE FIX: Changed model to gemini-3.8-flash as suggested by Google ---
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
 
     try {
         const imageParts = images.map(img => ({
