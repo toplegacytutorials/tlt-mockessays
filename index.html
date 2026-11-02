@@ -23,7 +23,7 @@
             
             <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
                 <input type="text" id="student-id" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT3001000">
-                <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Invalid ID or outside range (TLT3001000 - TLT3005000).</p>
+                <p id="error-msg" class="text-xs text-rose-400 font-medium mb-4 opacity-0 transition-opacity">Invalid ID</p>
                 
                 <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
             </form>
@@ -41,7 +41,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <span id="display-id" class="text-sm font-bold bg-slate-950 px-3 py-1 rounded-full border border-slate-800 font-mono text-blue-400"></span>
-                <button onclick="logout()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">Exit</button>
+                <button onclick="logout()" class="text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">LOGOUT</button>
             </div>
         </header>
 
@@ -78,11 +78,15 @@
                 </div>
             </div>
 
-            <!-- FOLDER 1: GROSS ANATOMY OF THE HEAD AND NECK -->
+            <!-- BREADCRUMB FOLDER 1: GROSS ANATOMY OF THE HEAD AND NECK -->
             <div class="space-y-4">
-                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                    <h3 class="font-bold text-lg text-white tracking-wide">Gross Anatomy of the Head and Neck</h3>
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 bg-slate-900/50 px-4 py-2.5 rounded-lg border border-slate-800">
+                    <span class="text-slate-500">Home</span>
+                    <span class="text-slate-600">/</span>
+                    <span class="text-rose-400 flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                        Gross Anatomy of the Head and Neck
+                    </span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-rose-500/50 transition-colors">
@@ -94,11 +98,15 @@
                 </div>
             </div>
 
-            <!-- FOLDER 2: NEUROANATOMY -->
-            <div class="space-y-4 pt-4">
-                <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                    <h3 class="font-bold text-lg text-white tracking-wide">Neuroanatomy</h3>
+            <!-- BREADCRUMB FOLDER 2: NEUROANATOMY -->
+            <div class="space-y-4 pt-2">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 bg-slate-900/50 px-4 py-2.5 rounded-lg border border-slate-800">
+                    <span class="text-slate-500">Home</span>
+                    <span class="text-slate-600">/</span>
+                    <span class="text-indigo-400 flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                        Neuroanatomy
+                    </span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
@@ -114,7 +122,24 @@
     </div>
 
     <script>
-        // STRICT ID RANGE VALIDATION: TLT3001000 to TLT3005000
+        // 60-MINUTE SESSION & ID MEMORY LOGIC
+        const SESSION_DURATION = 60 * 60 * 1000; // 60 Minutes
+
+        window.onload = () => {
+            const savedId = localStorage.getItem('tlt_remembered_id');
+            if (savedId) {
+                document.getElementById('student-id').value = savedId;
+                checkId();
+            }
+
+            const session = JSON.parse(localStorage.getItem('tlt_active_session'));
+            if (session && (Date.now() - session.time < SESSION_DURATION)) {
+                showDashboard(session.id);
+            } else {
+                logout(); // Clears expired session
+            }
+        };
+
         function checkId() {
             const input = document.getElementById('student-id').value.trim().toUpperCase();
             const btn = document.getElementById('login-btn');
@@ -143,6 +168,12 @@
 
         function login() {
             const id = document.getElementById('student-id').value.trim().toUpperCase();
+            localStorage.setItem('tlt_remembered_id', id); // Remember ID for future logins
+            localStorage.setItem('tlt_active_session', JSON.stringify({ id: id, time: Date.now() }));
+            showDashboard(id);
+        }
+
+        function showDashboard(id) {
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
             document.getElementById('dashboard-section').classList.add('flex');
@@ -150,6 +181,7 @@
         }
 
         function logout() {
+            localStorage.removeItem('tlt_active_session');
             window.location.reload();
         }
 
