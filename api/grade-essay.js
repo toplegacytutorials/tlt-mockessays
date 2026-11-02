@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     const { examId, images, mimeType, autoZero } = req.body;
     
-    // This pulls the key securely from Vercel Environment Variables
+    // Read the key from Vercel
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
@@ -81,8 +81,8 @@ export default async function handler(req, res) {
                 'X-Title': 'TLT Mock Essays'
             },
             body: JSON.stringify({
-                // Using Qwen 2 VL - an incredibly accurate free OCR model on OpenRouter
-                model: "qwen/qwen-2-vl-7b-instruct:free",
+                // CORRECTED MODEL NAME
+                model: "qwen/qwen2.5-vl-7b-instruct:free",
                 messages: [
                     {
                         role: "user",
