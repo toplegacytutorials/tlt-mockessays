@@ -27,7 +27,7 @@
             <p class="text-slate-400 text-center mb-6 text-sm">Enter your authorized Student ID to access mock exams.</p>
             
             <form onsubmit="event.preventDefault(); if(!document.getElementById('login-btn').disabled) login();" class="w-full">
-                <input type="text" id="student-id" name="tlt_student_id" autocomplete="username" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT300XXXX">
+                <input type="text" id="student-id" name="tlt_student_id" autocomplete="username" oninput="checkId()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none uppercase font-mono mb-2 text-white placeholder:text-slate-600" placeholder="E.G TLT3001000">
                 <p id="error-msg" class="text-xs text-red-400 font-medium mb-4 opacity-0 transition-opacity">Unauthorized ID.</p>
                 
                 <button type="submit" id="login-btn" disabled class="w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all">Verify & Enter ></button>
@@ -50,7 +50,7 @@
 
         <main class="max-w-5xl mx-auto p-6 mt-4">
 
-            <!-- SCORE HISTORY SECTION (Recent Activity) -->
+            <!-- SCORE HISTORY SECTION -->
             <div id="analytics-container" class="mb-8 hidden">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -61,16 +61,12 @@
                         <button id="view-all-btn" onclick="openHistoryModal()" class="text-[11px] text-blue-400 hover:text-blue-300 font-semibold transition-colors">View All History</button>
                     </div>
                 </div>
-                <div id="history-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Injected via JS -->
-                </div>
+                <div id="history-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
             
             <!-- BREADCRUMBS & SEARCH -->
             <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6 border-t border-slate-800/80 pt-6">
-                <div id="breadcrumb-container" class="flex items-center flex-wrap gap-2 text-sm font-medium text-slate-400">
-                    <!-- Injected via JS -->
-                </div>
+                <div id="breadcrumb-container" class="flex items-center flex-wrap gap-2 text-sm font-medium text-slate-400"></div>
                 <div class="relative w-full md:w-72">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 absolute left-3.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Search all exams..." class="w-full pl-11 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors text-sm">
@@ -78,14 +74,8 @@
             </div>
 
             <!-- DYNAMIC CONTENT CONTAINER -->
-            <div id="exam-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Injected via JS -->
-            </div>
-
-            <div id="no-results" class="hidden text-center py-16">
-                <p class="text-slate-500 text-sm">No matching assessments found.</p>
-            </div>
-
+            <div id="exam-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <div id="no-results" class="hidden text-center py-16"><p class="text-slate-500 text-sm">No matching assessments found.</p></div>
         </main>
     </div>
 
@@ -96,9 +86,7 @@
                 <h3 class="font-bold text-white text-base">Complete Attempt History</h3>
                 <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
             </div>
-            <div id="modal-history-list" class="p-6 overflow-y-auto custom-scroll flex-1">
-                <!-- Injected via JS -->
-            </div>
+            <div id="modal-history-list" class="p-6 overflow-y-auto custom-scroll flex-1"></div>
             <div class="px-6 py-3 bg-slate-950/50 border-t border-slate-800 flex justify-end">
                 <button onclick="closeHistoryModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-colors">Close</button>
             </div>
@@ -109,14 +97,14 @@
         // --- EXAM DATABASE ---
         const exams = [
             { 
-                id: 'carotid_triangle', title: 'ANATOMY - CAROTID TRIANGLE (ESSAY)', desc: '1 Essay • 30 mins', 
-                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head & Neck', 
-                file: 'essay_exam.html?exam=carotid_triangle', color: 'blue' 
+                id: 'mandible_essay', title: 'ANATOMY - MANDIBLE (ESSAY)', desc: '1 Essay • 45 mins', 
+                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head and Neck', 
+                file: 'essay_exam.html?exam=mandible_essay', color: 'blue' 
             },
             { 
-                id: 'neuro_corticospinal', title: 'NEUROANATOMY - CORTICOSPINAL TRACT (ESSAY)', desc: '1 Essay • 45 mins', 
-                subject: 'Anatomy', sub: 'Neuroanatomy', topic: 'Central Nervous System', 
-                file: 'essay_exam.html?exam=neuro_corticospinal', color: 'indigo' 
+                id: 'temporal_bone_essay', title: 'ANATOMY - TEMPORAL BONE (ESSAY)', desc: '1 Essay • 20 mins', 
+                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head and Neck', 
+                file: 'essay_exam.html?exam=temporal_bone_essay', color: 'indigo' 
             }
         ];
 
@@ -142,14 +130,7 @@
             const input = document.getElementById('student-id').value.trim().toUpperCase();
             const btn = document.getElementById('login-btn');
             const error = document.getElementById('error-msg');
-            
-            // Validates TLT3001000 up to TLT3005000
-            const match = input.match(/^TLT300(\d{4})$/);
-            let isValid = false;
-            if (match) {
-                const num = parseInt(match[1], 10);
-                if (num >= 1000 && num <= 5000) isValid = true;
-            }
+            const isValid = /^TLT300([1-4]\d{3}|5000)$/.test(input);
 
             if (input !== "" && !isValid) error.classList.remove('opacity-0');
             else error.classList.add('opacity-0');
@@ -185,7 +166,6 @@
             document.getElementById('student-id').value = '';
             document.getElementById('login-btn').disabled = true;
             document.getElementById('login-btn').className = "w-full py-3 rounded-xl font-semibold text-slate-500 bg-slate-800 cursor-not-allowed transition-all";
-            
             currentPath = ['Home'];
             isSearching = false;
             document.getElementById('search-bar').value = '';
@@ -195,12 +175,10 @@
         function renderBreadcrumbs() {
             const container = document.getElementById('breadcrumb-container');
             container.innerHTML = '';
-            
             currentPath.forEach((crumb, index) => {
                 const isLast = index === currentPath.length - 1;
                 const span = document.createElement('span');
                 span.innerText = crumb;
-                
                 if (isLast && !isSearching) {
                     span.className = "text-white font-bold";
                 } else {
@@ -214,7 +192,6 @@
                     };
                 }
                 container.appendChild(span);
-
                 if (!isLast) {
                     const sep = document.createElement('span');
                     sep.innerText = '/';
@@ -245,7 +222,6 @@
             grid.innerHTML = '';
             let html = '';
             let count = 0;
-
             const query = document.getElementById('search-bar').value.toLowerCase().trim();
 
             if (isSearching && query) {
@@ -256,10 +232,8 @@
                     e.sub.toLowerCase().includes(query)
                 );
                 filtered.forEach(e => { html += createExamCard(e); count++; });
-            
             } else {
                 let filtered = exams;
-
                 if (currentPath.length > 1) filtered = filtered.filter(e => e.subject === currentPath[1]);
                 if (currentPath.length > 2) filtered = filtered.filter(e => e.sub === currentPath[2]);
                 if (currentPath.length > 3) filtered = filtered.filter(e => e.topic === currentPath[3]);
@@ -307,23 +281,13 @@
 
         function createFolderCard(title, subtitle, path, color = 'blue') {
             const pathString = JSON.stringify(path).replace(/"/g, '&quot;');
-            
             let iconBg, iconColor, hoverBorder, groupHoverText;
             if (color === 'emerald') {
-                iconBg = 'bg-emerald-900/20 border-emerald-800/50';
-                iconColor = 'text-emerald-400';
-                hoverBorder = 'hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)]';
-                groupHoverText = 'group-hover:text-emerald-400';
+                iconBg = 'bg-emerald-900/20 border-emerald-800/50'; iconColor = 'text-emerald-400'; hoverBorder = 'hover:border-emerald-500/50'; groupHoverText = 'group-hover:text-emerald-400';
             } else if (color === 'indigo') {
-                iconBg = 'bg-indigo-900/20 border-indigo-800/50';
-                iconColor = 'text-indigo-400';
-                hoverBorder = 'hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.1)]';
-                groupHoverText = 'group-hover:text-indigo-400';
+                iconBg = 'bg-indigo-900/20 border-indigo-800/50'; iconColor = 'text-indigo-400'; hoverBorder = 'hover:border-indigo-500/50'; groupHoverText = 'group-hover:text-indigo-400';
             } else {
-                iconBg = 'bg-blue-900/20 border-blue-800/50';
-                iconColor = 'text-blue-400';
-                hoverBorder = 'hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]';
-                groupHoverText = 'group-hover:text-blue-400';
+                iconBg = 'bg-blue-900/20 border-blue-800/50'; iconColor = 'text-blue-400'; hoverBorder = 'hover:border-blue-500/50'; groupHoverText = 'group-hover:text-blue-400';
             }
 
             return `
@@ -343,22 +307,13 @@
         function createExamCard(e) {
             const isBlue = e.color === 'blue';
             const isIndigo = e.color === 'indigo';
-            
-            let badgeClass = isBlue ? 'text-blue-400 bg-blue-900/30 border-blue-800/30' : 
-                             isIndigo ? 'text-indigo-400 bg-indigo-900/30 border-indigo-800/30' : 
-                             'text-emerald-400 bg-emerald-900/30 border-emerald-800/30';
-                             
-            let btnClass = isBlue ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/25' : 
-                           isIndigo ? 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/25' : 
-                           'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/25';
-            
+            let badgeClass = isBlue ? 'text-blue-400 bg-blue-900/30 border-blue-800/30' : isIndigo ? 'text-indigo-400 bg-indigo-900/30 border-indigo-800/30' : 'text-emerald-400 bg-emerald-900/30 border-emerald-800/30';
+            let btnClass = isBlue ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/25' : isIndigo ? 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/25' : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/25';
             const pathText = e.topic ? `${e.sub} • ${e.topic}` : e.sub;
 
             return `
                 <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 p-6 relative overflow-hidden flex flex-col h-full hover:border-slate-700 transition-colors">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider ${badgeClass} px-2 py-1 rounded border w-max">${e.subject}</span>
-                    </div>
+                    <div class="flex justify-between items-start mb-3"><span class="text-xs font-bold uppercase tracking-wider ${badgeClass} px-2 py-1 rounded border w-max">${e.subject}</span></div>
                     <h3 class="font-bold text-lg mb-1 text-white flex-1 leading-tight">${e.title}</h3>
                     <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">${pathText}</p>
                     <p class="text-slate-400 text-sm mb-6">${e.desc}</p>
@@ -384,20 +339,12 @@
 
                 history.slice(0, 2).forEach(item => {
                     const scoreColor = item.percent >= 70 ? 'text-green-400' : item.percent >= 50 ? 'text-yellow-400' : 'text-red-400';
-                    
-                    const examData = exams.find(x => 
-                        item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || 
-                        x.title.toLowerCase().includes(item.examTitle.toLowerCase())
-                    );
-                    
+                    const examData = exams.find(x => item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || x.title.toLowerCase().includes(item.examTitle.toLowerCase()));
                     const pathText = examData ? (examData.topic ? `${examData.sub} • ${examData.topic}` : examData.sub) : 'General';
 
                     historyGrid.innerHTML += `
                         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-md">
-                            <div class="flex justify-between items-center text-[11px] text-slate-500 mb-1">
-                                <span>${item.date}</span>
-                                <span>${item.time || ''}</span>
-                            </div>
+                            <div class="flex justify-between items-center text-[11px] text-slate-500 mb-1"><span>${item.date}</span><span>${item.time || ''}</span></div>
                             <h4 class="font-bold text-white text-sm truncate">${item.examTitle}</h4>
                             <p class="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-2">${pathText}</p>
                             <div class="flex items-end justify-between">
@@ -428,13 +375,8 @@
             }
 
             const grouped = {};
-
             history.forEach(item => {
-                const examData = exams.find(x => 
-                    item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || 
-                    x.title.toLowerCase().includes(item.examTitle.toLowerCase())
-                );
-                
+                const examData = exams.find(x => item.examTitle.toLowerCase().includes(x.title.toLowerCase()) || x.title.toLowerCase().includes(item.examTitle.toLowerCase()));
                 const subj = item.subject || examData?.subject || 'Other';
                 const sub = examData?.sub || 'General';
                 const topic = examData?.topic || 'General';
@@ -444,7 +386,6 @@
                 if (!grouped[subj][sub]) grouped[subj][sub] = {};
                 if (!grouped[subj][sub][topic]) grouped[subj][sub][topic] = {};
                 if (!grouped[subj][sub][topic][title]) grouped[subj][sub][topic][title] = [];
-
                 grouped[subj][sub][topic][title].push(item);
             });
 
@@ -452,58 +393,29 @@
                 const isBlue = subjectName === 'Anatomy';
                 const subjectColor = isBlue ? 'text-blue-400' : 'text-emerald-400';
                 const subjectBorder = isBlue ? 'border-blue-900/50' : 'border-emerald-900/50';
-
-                let groupHTML = `
-                    <div class="mb-8">
-                        <h4 class="text-sm font-bold uppercase tracking-widest ${subjectColor} mb-4 border-b ${subjectBorder} pb-2">${subjectName}</h4>
-                `;
+                let groupHTML = `<div class="mb-8"><h4 class="text-sm font-bold uppercase tracking-widest ${subjectColor} mb-4 border-b ${subjectBorder} pb-2">${subjectName}</h4>`;
 
                 for (const [subName, topics] of Object.entries(subs)) {
                     if (subName !== 'General') {
-                        groupHTML += `
-                            <div class="mb-5 ml-2">
-                                <h5 class="text-[13px] font-bold text-slate-200 uppercase tracking-wide mb-2 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
-                                    ${subName}
-                                </h5>
-                        `;
-                    } else {
-                        groupHTML += `<div class="mb-5 ml-2">`;
-                    }
+                        groupHTML += `<div class="mb-5 ml-2"><h5 class="text-[13px] font-bold text-slate-200 uppercase tracking-wide mb-2 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>${subName}</h5>`;
+                    } else { groupHTML += `<div class="mb-5 ml-2">`; }
 
                     for (const [topicName, titles] of Object.entries(topics)) {
                         if (topicName !== 'General') {
-                            groupHTML += `
-                                <div class="ml-6 mb-3">
-                                    <h6 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 border-l-2 border-slate-700 pl-2">${topicName}</h6>
-                            `;
-                        } else {
-                            groupHTML += `<div class="ml-6 mb-3">`;
-                        }
+                            groupHTML += `<div class="ml-6 mb-3"><h6 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 border-l-2 border-slate-700 pl-2">${topicName}</h6>`;
+                        } else { groupHTML += `<div class="ml-6 mb-3">`; }
 
                         for (const [titleName, attempts] of Object.entries(titles)) {
-                            groupHTML += `
-                                <div class="ml-2 mb-3">
-                                    <h6 class="text-xs font-semibold text-white mb-2">${titleName}</h6>
-                                    <div class="space-y-2 border-l-2 border-slate-800 pl-4">
-                            `;
-
+                            groupHTML += `<div class="ml-2 mb-3"><h6 class="text-xs font-semibold text-white mb-2">${titleName}</h6><div class="space-y-2 border-l-2 border-slate-800 pl-4">`;
                             attempts.forEach(item => {
                                 const scoreColor = item.percent >= 70 ? 'text-green-400' : item.percent >= 50 ? 'text-yellow-400' : 'text-red-400';
                                 groupHTML += `
                                     <div class="bg-slate-950 border border-slate-800/80 rounded-lg p-3 flex justify-between items-center hover:border-slate-700 transition-colors">
-                                        <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            ${item.date} <span class="mx-0.5">•</span> ${item.time || ''}
-                                        </div>
-                                        <div class="flex items-center gap-4">
-                                            <span class="text-[11px] font-mono text-slate-500">${item.score}/${item.total} pts</span>
-                                            <span class="text-sm font-bold ${scoreColor} w-12 text-right">${item.percent}%</span>
-                                        </div>
+                                        <div class="text-[11px] text-slate-400 flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>${item.date} <span class="mx-0.5">•</span> ${item.time || ''}</div>
+                                        <div class="flex items-center gap-4"><span class="text-[11px] font-mono text-slate-500">${item.score}/${item.total} pts</span><span class="text-sm font-bold ${scoreColor} w-12 text-right">${item.percent}%</span></div>
                                     </div>
                                 `;
                             });
-
                             groupHTML += `</div></div>`;
                         }
                         groupHTML += `</div>`;
@@ -513,7 +425,6 @@
                 groupHTML += `</div>`;
                 list.innerHTML += groupHTML;
             }
-
             modal.classList.remove('hidden');
         }
 
