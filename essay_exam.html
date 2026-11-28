@@ -167,7 +167,7 @@
         const EXAM_ID = urlParams.get('exam') || 'mandible_essay'; 
         const WEB3FORMS_ACCESS_KEY = "a9cd9997-29c3-486f-9667-bb01dfdb0375"; 
         
-        // The questions database holds the new exams. Notice the list format for the mandible.
+        // The questions database holds the new exams. Notice the list format.
         const questionsDb = {
             'mandible_essay': { 
                 title: "ANATOMY - THE MANDIBLE", 
@@ -178,6 +178,16 @@
                 title: "ANATOMY - THE TEMPORAL BONE", 
                 question: "Discuss the temporal bone.", 
                 time: 20 
+            },
+            'deep_cervical_fascia': { 
+                title: "ANATOMY - DEEP CERVICAL FASCIA", 
+                question: "Describe the deep cervical fascia of the neck under the following headings:<br><br>• Layers and attachments<br>• Structures enclosed by each layer<br>• Fascial spaces formed<br>• Clinical importance in the spread of infection and surgery", 
+                time: 60 
+            },
+            'facial_artery': { 
+                title: "ANATOMY - FACIAL ARTERY", 
+                question: "Write short notes on the following:<br><br>• Facial artery", 
+                time: 30 
             }
         };
 

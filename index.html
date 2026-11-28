@@ -117,6 +117,16 @@
                 id: 'temporal_bone_essay', title: 'ANATOMY - TEMPORAL BONE (ESSAY)', desc: '1 Essay • 20 mins', 
                 subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head and Neck', 
                 file: 'essay_exam.html?exam=temporal_bone_essay', color: 'indigo' 
+            },
+            { 
+                id: 'deep_cervical_fascia', title: 'ANATOMY - DEEP CERVICAL FASCIA (ESSAY)', desc: '1 Essay • 60 mins', 
+                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head and Neck', 
+                file: 'essay_exam.html?exam=deep_cervical_fascia', color: 'blue' 
+            },
+            { 
+                id: 'facial_artery', title: 'ANATOMY - FACIAL ARTERY (ESSAY)', desc: '1 Essay • 30 mins', 
+                subject: 'Anatomy', sub: 'Gross Anatomy', topic: 'Head and Neck', 
+                file: 'essay_exam.html?exam=facial_artery', color: 'indigo' 
             }
         ];
 
@@ -180,7 +190,6 @@
             if (rawSession) {
                 try {
                     const id = JSON.parse(rawSession).id;
-                    // Clears active exam states if any exist
                     exams.forEach(exam => {
                         localStorage.removeItem(`tlt_active_exam_${exam.id}_${id}`);
                     });
